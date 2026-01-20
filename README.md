@@ -1,11 +1,13 @@
+# NIXRIX LTD — Company Website
 
-  # Corporate Website UI Design (Copy)
+Official website project for **NIXRIX LTD**.
 
-  This is a code bundle for Corporate Website UI Design (Copy). The original project is available at https://www.figma.com/design/vV0poGVfTuBla4LFIdK9wj/Corporate-Website-UI-Design--Copy-.
+## Tech
+- Vite
+- (React/Vue/Vanilla — update if you know which one)
 
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
-  
+## Run locally
+```bash
+npm install
+npm run dev
+npm run build
