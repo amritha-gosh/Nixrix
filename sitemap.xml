@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nixrix.com/</loc></url>
+  <url><loc>https://nixrix.com/services</loc></url>
+  <url><loc>https://nixrix.com/work</loc></url>
+  <url><loc>https://nixrix.com/demo</loc></url>
+  <url><loc>https://nixrix.com/how-it-works</loc></url>
+  <url><loc>https://nixrix.com/about</loc></url>
+  <url><loc>https://nixrix.com/contact</loc></url>
+  <url><loc>https://nixrix.com/careers</loc></url>
+
+  <url><loc>https://nixrix.com/demo/dashboard</loc></url>
+  <url><loc>https://nixrix.com/demo/chatbot</loc></url>
+  <url><loc>https://nixrix.com/demo/website</loc></url>
+  <url><loc>https://nixrix.com/demo/service-business</loc></url>
+  <url><loc>https://nixrix.com/demo/portfolio</loc></url>
+</urlset>
