@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Navigation } from "@/app/components/Navigation";
 import { Footer } from "@/app/components/Footer";
+import { CareersPage } from "@/app/pages/CareersPage";
 
 import { HomePage } from "@/app/pages/HomePage";
 import { ServicesPage } from "@/app/pages/ServicesPage";
@@ -27,6 +28,8 @@ export default function App() {
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+
 
             {/* New structure (temporary mapping to existing pages until we update pages) */}
             <Route path="/solutions" element={<ServicesPage />} />
