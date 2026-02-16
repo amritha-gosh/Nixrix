@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Check, Sparkles, ShieldCheck, Loader2, CheckCircle, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Globe, MessageSquare, BarChart3, Check, Sparkles, ShieldCheck, X, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
@@ -9,17 +9,17 @@ import { SEOHead } from "@/app/components/SEOHead";
 import { Input } from "@/app/components/ui/input";
 import { motion, AnimatePresence } from "motion/react";
 
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
 type AuditPayload = {
-  type: "WELCOME_CODE"; // keep backend compatibility (we're using it for Audit requests)
+  type: "WELCOME_CODE"; // keep backend compatibility
   email: string;
   source: "homepage";
   pageUrl: string;
   meta?: Record<string, string>;
 };
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
 
 function AuditModal({
   open,
@@ -29,7 +29,6 @@ function AuditModal({
   onClose: () => void;
 }) {
   const LEAD_ENDPOINT = (import.meta as any)?.env?.VITE_LEAD_ENDPOINT || "/api/lead";
-
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -60,7 +59,7 @@ function AuditModal({
       pageUrl: window.location.href,
       meta: {
         intent: "Complimentary Digital Systems Audit",
-        region: "UK",
+        note: "Corporate offer (no discounts / no codes).",
       },
     };
 
@@ -74,8 +73,8 @@ function AuditModal({
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 
       setStatus("success");
-      setMsg("Done — we’ll email you the audit booking details shortly.");
-      setTimeout(() => onClose(), 1400);
+      setMsg("Thanks — we’ll email you the next steps shortly.");
+      setTimeout(() => onClose(), 1200);
     } catch {
       setStatus("error");
       setMsg("Couldn’t send right now. Please try again, or email hello@nixrix.com.");
@@ -100,18 +99,18 @@ function AuditModal({
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
           >
-            <div className="w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-950/95 to-gray-900/95 shadow-2xl">
-              <div className="p-6 sm:p-7 border-b border-white/10 flex items-start justify-between gap-4">
+            <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-gray-900/95 to-gray-950/95 shadow-2xl">
+              <div className="p-6 border-b border-white/10 flex items-start justify-between gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/80">
                     <Sparkles className="w-3.5 h-3.5" />
-                    Complimentary Audit (UK-based)
+                    Complimentary Digital Systems Audit (UK-based)
                   </div>
                   <h3 className="mt-3 text-2xl font-bold text-white">
-                    Get Your Digital Systems Audit
+                    Request the Audit
                   </h3>
                   <p className="mt-2 text-sm text-white/70">
-                    We’ll review your website + lead flow and suggest quick wins for conversion, CRM, automation and reporting.
+                    We’ll review your website + lead flow and suggest improvements for conversion, CRM readiness, automation, and reporting.
                   </p>
                 </div>
 
@@ -124,31 +123,31 @@ function AuditModal({
                 </button>
               </div>
 
-              <form onSubmit={submit} className="p-6 sm:p-7 space-y-4">
+              <form onSubmit={submit} className="p-6 space-y-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-white/90">Work email</label>
                   <Input
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@business.com"
-                    className="bg-white/5 border-white/15 text-white placeholder:text-white/40 h-12 rounded-2xl"
+                    className="bg-white/5 border-white/15 text-white placeholder:text-white/40 h-12 rounded-xl"
                   />
                 </div>
 
                 {status === "error" && (
-                  <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                     {msg}
                   </div>
                 )}
                 {status === "success" && (
-                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
                     {msg}
                   </div>
                 )}
 
                 <Button
                   type="submit"
-                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#0D9488] to-[#06B6D4] text-white shadow-lg hover:shadow-2xl"
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#0D9488] to-[#06B6D4] text-white shadow-lg hover:shadow-2xl"
                   disabled={status === "loading"}
                 >
                   {status === "loading" ? (
@@ -185,262 +184,283 @@ function AuditModal({
 export function HomePage() {
   const [auditOpen, setAuditOpen] = useState(false);
 
-  const coreServices = useMemo(
-    () => [
-      {
-        image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=900&h=650&fit=crop&q=80",
-        title: "Conversion Websites",
-        description: "Luxury-grade design, fast performance, and messaging built to convert visitors into enquiries.",
-        features: ["Premium UI/UX", "Conversion-focused structure", "SEO-ready foundations", "Mobile-first build"],
-      },
-      {
-        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&h=650&fit=crop&q=80",
-        title: "Business Intelligence",
-        description: "Dashboards and KPI reporting that turn raw activity into clear decisions—without the confusion.",
-        features: ["KPI dashboards", "Plain-language insights", "Automated reporting", "Performance visibility"],
-      },
-      {
-        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=900&h=650&fit=crop&q=80",
-        title: "CRM & Automation",
-        description: "Lead capture → pipeline → follow-ups → tasks. Systems that reduce manual work and prevent lost leads.",
-        features: ["CRM-ready lead capture", "Workflow automation", "Task & follow-up flows", "Proposal-ready pipelines"],
-      },
-      {
-        image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=900&h=650&fit=crop&q=80",
-        title: "Operational Integration",
-        description: "Connect your website with your operational tools—ideal for distribution, trading, and scaling SMEs.",
-        features: ["ERP/ops integration", "Inventory & orders visibility", "Data syncing", "Scalable infrastructure"],
-      },
-    ],
-    []
-  );
+  const coreServices = [
+    {
+      image: "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=300&fit=crop",
+      title: "Website Design",
+      description: "From one-page sites to full business platforms—responsive, fast, and SEO-ready.",
+      features: ["One-page websites", "Business websites", "Portfolio sites", "E-commerce ready"],
+    },
+    {
+      image: "https://images.unsplash.com/photo-1751448582395-27fc57293f1a?w=400&h=300&fit=crop",
+      title: "AI Chatbots",
+      description: "Chatbots that engage visitors, answer questions, and capture enquiries—24/7.",
+      features: ["FAQ automation", "Lead capture", "Custom training", "Multi-language"],
+    },
+    {
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+      title: "Intelligent Websites",
+      description: "Websites with embedded KPI dashboards, live data visibility, and decision insights.",
+      features: ["Power BI dashboards", "Real-time data", "KPI explanations", "Automated alerts"],
+    },
+    {
+      image: "https://images.unsplash.com/photo-1761195696590-3490ea770aa1?w=400&h=300&fit=crop",
+      title: "Automation & SEO",
+      description: "Lead workflows, CRM readiness, technical SEO, and performance optimisation.",
+      features: ["Workflow automation", "Technical SEO", "Performance tuning", "Analytics setup"],
+    },
+  ];
 
-  const industries = useMemo(
-    () => [
-      {
-        title: "Retail",
-        image: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=900&h=650&fit=crop&q=80",
-        points: ["Visibility & local growth", "Lead capture that converts", "Simple reporting"],
-      },
-      {
-        title: "Distribution & Trading",
-        image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=900&h=650&fit=crop&q=80",
-        points: ["Order flow clarity", "Pipeline & margin visibility", "Operational automation"],
-      },
-      {
-        title: "Manufacturing",
-        image: "https://images.unsplash.com/photo-1581092580501-5cfa6f1e1b23?w=900&h=650&fit=crop&q=80",
-        points: ["Performance dashboards", "Process visibility", "Structured digital systems"],
-      },
-      {
-        title: "Service Businesses",
-        image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=900&h=650&fit=crop&q=80",
-        points: ["Bookings & follow-ups", "CRM pipelines", "Automation that saves time"],
-      },
-    ],
-    []
-  );
+  const demoShowcase = [
+    {
+      title: "Live Dashboard Demo",
+      description: "See how we embed dashboards with plain-language insights",
+      icon: <BarChart3 className="w-16 h-16" />,
+      tag: "Interactive Demo",
+      link: "/demo/dashboard",
+      image: "https://images.unsplash.com/photo-1759752394755-1241472b589d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    },
+    {
+      title: "AI Chatbot Demo",
+      description: "Try a realistic assistant designed for lead capture and support",
+      icon: <MessageSquare className="w-16 h-16" />,
+      tag: "Live Feature",
+      link: "/demo/chatbot",
+      image: "https://images.unsplash.com/photo-1757310998309-87a97e562ee5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    },
+    {
+      title: "Website Showcase",
+      description: "Modern, responsive designs with smooth interactions",
+      icon: <Globe className="w-16 h-16" />,
+      tag: "Experience",
+      link: "/demo/website",
+      image: "https://images.unsplash.com/photo-1630522790545-67ad2cb700fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    },
+  ];
 
-  const demos = useMemo(
-    () => [
-      {
-        title: "Live KPI Dashboard",
-        description: "A realistic view of how performance reporting can look inside your website.",
-        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=720&fit=crop&q=80",
-        link: "/demo/dashboard",
-        tag: "Interactive",
-      },
-      {
-        title: "AI Assistant + Lead Capture",
-        description: "A premium chatbot experience designed to qualify enquiries and route them properly.",
-        image: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=1200&h=720&fit=crop&q=80",
-        link: "/demo/chatbot",
-        tag: "Live",
-      },
-      {
-        title: "Website Experience Showcase",
-        description: "Micro-interactions, motion, and high-end UI patterns for modern brands.",
-        image: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=1200&h=720&fit=crop&q=80",
-        link: "/demo/website",
-        tag: "Premium UI",
-      },
-    ],
-    []
-  );
+  const stats = [
+    { value: "UK", label: "Based • Global Delivery" },
+    { value: "CRM", label: "Lead-ready systems" },
+    { value: "Automation", label: "Workflows & follow-ups" },
+    { value: "Insights", label: "Dashboards & reporting" },
+  ];
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white">
+    <div className="min-h-screen overflow-x-hidden">
       <SEOHead
-        title="NIXRIX — Intelligent Digital Systems & Automation for Growing SMEs (UK)"
-        description="UK-based digital systems partner for SMEs. Premium websites, CRM-ready lead capture, automation workflows, and KPI dashboards—built to scale."
-        keywords="SME automation UK, business systems, CRM workflows, KPI dashboards, premium web design, digital transformation SMEs"
+        title="NIXRIX - Modern Business Websites with AI, Automation & Dashboards | UK"
+        description="UK-based digital systems partner for SMEs. Websites, AI chatbots, automation workflows, CRM readiness, and KPI dashboards."
+        keywords="web design UK, SME automation, AI chatbot, KPI dashboard, Power BI integration, CRM workflows, technical SEO, intelligent websites"
         schemaType="organization"
       />
       <ChatbotWidget />
       <AuditModal open={auditOpen} onClose={() => setAuditOpen(false)} />
 
-      {/* HERO (Luxury / premium) */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
-        {/* Luxury background layers */}
-        <div className="absolute inset-0">
-          {/* Subtle premium grid */}
-          <div
-            className="absolute inset-0 opacity-[0.12]"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)",
-              backgroundSize: "64px 64px",
-            }}
-          />
+      {/* HERO — same structure, luxury background upgrade */}
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        {/* Premium background layers (still your style) */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/95 to-gray-900/80" />
 
-          {/* Animated mesh gradients */}
+          {/* Luxury dot grid */}
+          <div className="absolute inset-0 opacity-10">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+                backgroundSize: "54px 54px",
+              }}
+            />
+          </div>
+
+          {/* Animated Mesh Gradient (subtle, premium) */}
           <motion.div
-            className="absolute inset-0 opacity-40"
+            className="absolute inset-0 opacity-30"
             animate={{
               background: [
-                "radial-gradient(900px circle at 18% 35%, rgba(6,182,212,0.28) 0%, transparent 55%), radial-gradient(800px circle at 82% 62%, rgba(13,148,136,0.22) 0%, transparent 55%)",
-                "radial-gradient(900px circle at 22% 60%, rgba(13,148,136,0.24) 0%, transparent 55%), radial-gradient(800px circle at 78% 35%, rgba(6,182,212,0.26) 0%, transparent 55%)",
-                "radial-gradient(900px circle at 18% 35%, rgba(6,182,212,0.28) 0%, transparent 55%), radial-gradient(800px circle at 82% 62%, rgba(13,148,136,0.22) 0%, transparent 55%)",
+                "radial-gradient(circle at 20% 50%, rgba(13, 148, 136, 0.30) 0%, transparent 52%)",
+                "radial-gradient(circle at 80% 50%, rgba(6, 182, 212, 0.30) 0%, transparent 52%)",
+                "radial-gradient(circle at 50% 80%, rgba(13, 148, 136, 0.28) 0%, transparent 52%)",
+                "radial-gradient(circle at 20% 50%, rgba(13, 148, 136, 0.30) 0%, transparent 52%)",
               ],
             }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
           />
 
-          {/* Floating premium glows */}
-          <motion.div
-            className="absolute -top-24 -right-24 w-[520px] h-[520px] bg-[#06B6D4]/15 rounded-full blur-3xl"
-            animate={{ x: [0, -24, 0], y: [0, 18, 0], scale: [1, 1.08, 1] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute -bottom-24 -left-24 w-[620px] h-[620px] bg-[#0D9488]/15 rounded-full blur-3xl"
-            animate={{ x: [0, 26, 0], y: [0, -22, 0], scale: [1.06, 1, 1.06] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          {/* Right-side luxury “glass” panel */}
-          <div className="absolute right-0 top-0 bottom-0 w-[54%] hidden lg:block">
+          {/* Right-side visual stays like before */}
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block">
             <motion.div
-              className="absolute inset-0 opacity-[0.18]"
+              className="absolute inset-0 opacity-20"
               style={{
-                backgroundImage: "url(https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1600&q=80)",
+                backgroundImage: "url(https://images.unsplash.com/photo-1644088379091-d574269d422f?w=1200&q=80)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-              animate={{ scale: [1, 1.03, 1] }}
-              transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-gray-950/60 to-gray-950" />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-transparent to-transparent" />
           </div>
         </div>
 
-        {/* Content */}
+        {/* Floating elements kept (just slightly more subtle) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute top-20 right-20 w-72 h-72 bg-[#06B6D4]/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.15, 1], x: [0, 26, 0], y: [0, -22, 0], opacity: [0.28, 0.45, 0.28] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-20 w-96 h-96 bg-[#0D9488]/10 rounded-full blur-3xl"
+            animate={{ scale: [1.15, 1, 1.15], x: [0, -26, 0], y: [0, 22, 0], opacity: [0.45, 0.28, 0.45] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Floating mockup stays but calmer */}
+          <motion.div
+            className="hidden xl:block absolute right-10 top-1/2 transform -translate-y-1/2 w-[500px]"
+            initial={{ opacity: 0, x: 100, rotateY: -14 }}
+            animate={{ opacity: 0.14, x: 0, rotateY: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            style={{ perspective: 1000 }}
+          >
+            <motion.div
+              animate={{ y: [0, -14, 0], rotateY: [-4, 4, -4] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="relative"
+            >
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
+                <div className="space-y-4">
+                  <div className="h-4 bg-gradient-to-r from-[#06B6D4]/30 to-[#0D9488]/30 rounded w-3/4" />
+                  <div className="h-4 bg-gradient-to-r from-[#0D9488]/30 to-[#06B6D4]/30 rounded w-1/2" />
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div className="h-20 bg-gradient-to-br from-[#06B6D4]/20 to-transparent rounded" />
+                    <div className="h-20 bg-gradient-to-br from-[#0D9488]/20 to-transparent rounded" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Hero Content (keep wording style, remove pricing) */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
           <div className="max-w-4xl">
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 backdrop-blur-sm"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="inline-block mb-6 px-5 py-2.5 bg-[#06B6D4]/10 backdrop-blur-sm rounded-full border border-[#06B6D4]/30"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-white/80 text-sm font-semibold">
-                UK-based • Serving SMEs across the UK & beyond
+              <span className="text-[#06B6D4] text-sm font-semibold">
+                UK-based • Building intelligent digital systems for growing SMEs
               </span>
             </motion.div>
 
-            <motion.h1
-              className="mt-6 text-5xl md:text-7xl font-bold leading-[1.05] text-white"
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-            >
-              Premium Digital Systems
-              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#06B6D4] via-[#0D9488] to-[#06B6D4]">
-                Built to Scale Your Business
-              </span>
-            </motion.h1>
+            <div className="mb-8">
+              <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
+                  Websites Built for
+                </h1>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#06B6D4] via-[#0D9488] to-[#06B6D4] animate-gradient">
+                    Real Business Results
+                  </span>
+                </h1>
+              </motion.div>
+            </div>
 
             <motion.p
-              className="mt-6 text-xl md:text-2xl text-white/70 leading-relaxed max-w-3xl"
-              initial={{ opacity: 0, y: 22 }}
+              className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed max-w-3xl"
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.22 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
             >
-              We engineer connected ecosystems—web, CRM-ready lead capture, automation workflows and KPI reporting—
-              so your business runs smoother, responds faster, and converts more.
+              From simple portfolios to advanced platforms with AI chatbots, live dashboards, CRM-ready lead capture, and automation.
+              <span className="text-[#06B6D4] font-semibold"> Built to scale with your business.</span>
             </motion.p>
 
-            {/* CTA */}
             <motion.div
-              className="mt-10 flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 22 }}
+              className="flex flex-col sm:flex-row gap-4"
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.34 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
             >
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="lg"
                   onClick={() => setAuditOpen(true)}
-                  className="h-14 px-8 rounded-2xl bg-gradient-to-r from-[#0D9488] to-[#06B6D4] text-white shadow-xl hover:shadow-2xl"
+                  className="relative bg-gradient-to-r from-[#0D9488] to-[#06B6D4] hover:shadow-2xl text-white text-lg px-10 py-7 group overflow-hidden"
                 >
-                  Request Complimentary Audit
-                  <motion.span
-                    className="ml-2 inline-flex"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.6, repeat: Infinity }}
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.span>
+                  <span className="relative z-10 flex items-center">
+                    Request a Complimentary Audit
+                    <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </motion.div>
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-[#06B6D4] to-[#0D9488]"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
                 </Button>
               </motion.div>
 
-              <Link to="/services">
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <Link to="/work">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-14 px-8 rounded-2xl border-2 border-white/35 text-white hover:bg-white hover:text-gray-950 backdrop-blur-sm"
+                    className="border-2 border-white/50 text-white hover:bg-white hover:text-gray-900 text-lg px-10 py-7 backdrop-blur-sm"
                   >
-                    Explore Solutions
+                    View Live Demos
                   </Button>
                 </motion.div>
               </Link>
             </motion.div>
 
-            {/* Trust strip */}
+            {/* Keep stats style (no numbers, premium) */}
             <motion.div
-              className="mt-10 flex flex-wrap items-center gap-3"
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-16 border-t border-white/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.55, duration: 0.8 }}
+              transition={{ duration: 0.8, delay: 1.1 }}
             >
-              {[
-                "Conversion-first UX",
-                "CRM-ready pipelines",
-                "Automation workflows",
-                "KPI visibility",
-              ].map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70"
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center group cursor-default"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1 + index * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
                 >
-                  <Check className="w-4 h-4 text-emerald-300" />
-                  {t}
-                </span>
+                  <motion.div
+                    className="text-2xl md:text-3xl font-bold text-white mb-2"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 1.3 + index * 0.1, type: "spring", stiffness: 200 }}
+                  >
+                    {stat.value}
+                  </motion.div>
+                  <div className="text-sm text-gray-400 group-hover:text-[#06B6D4] transition-colors">
+                    {stat.label}
+                  </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Scroll Indicator (same) */}
         <motion.div
-          className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10"
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <div className="w-6 h-10 border-2 border-white/25 rounded-full flex items-start justify-center p-2 backdrop-blur-sm">
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2 backdrop-blur-sm">
             <motion.div
               className="w-1 h-3 bg-white/50 rounded-full"
               animate={{ y: [0, 12, 0] }}
@@ -450,60 +470,41 @@ export function HomePage() {
         </motion.div>
       </section>
 
-      {/* SERVICES (images, premium cards) */}
+      {/* Services Grid (same section, just remove pricing lines) */}
       <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.06] pointer-events-none">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle, #0D9488 1px, transparent 1px)",
-              backgroundSize: "56px 56px",
-            }}
-          />
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, #0D9488 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal className="text-center mb-16">
-            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">What We Deliver</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-950 mt-4 mb-6">
-              Systems That Feel Premium — and Work Like Infrastructure
+            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">What We Build</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-6">
+              Choose Your Level
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Beautiful customer-facing experiences, backed by connected operations: lead capture, automation, and reporting.
+              From simple websites to advanced platforms—flexible services that grow with your business.
             </p>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {coreServices.map((service, index) => (
-              <ScrollReveal key={index} delay={index * 0.08}>
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  transition={{ type: "spring", stiffness: 280, damping: 22 }}
-                  className="h-full"
-                >
-                  <Card className="h-full overflow-hidden border-2 hover:border-[#0D9488] transition-colors rounded-3xl">
-                    <div className="relative aspect-[16/11] overflow-hidden">
+              <ScrollReveal key={index} delay={index * 0.1}>
+                <motion.div whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <Card className="h-full border-2 hover:border-[#0D9488] transition-colors cursor-pointer overflow-hidden">
+                    <div className="aspect-video overflow-hidden">
                       <motion.img
                         src={service.image}
                         alt={service.title}
                         className="w-full h-full object-cover"
-                        whileHover={{ scale: 1.08 }}
-                        transition={{ duration: 0.35 }}
-                        loading="lazy"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.3 }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950/65 via-gray-950/10 to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs text-white/80 backdrop-blur">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Premium build
-                        </div>
-                      </div>
                     </div>
-
                     <CardContent className="p-6">
-                      <h3 className="text-xl font-bold text-gray-950 mb-3">{service.title}</h3>
-                      <p className="text-gray-600 mb-5 text-sm leading-relaxed">{service.description}</p>
-                      <ul className="space-y-2">
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
+                      <p className="text-gray-600 mb-4 text-sm leading-relaxed">{service.description}</p>
+                      <ul className="space-y-2 mb-6">
                         {service.features.map((feature, idx) => (
                           <li key={idx} className="flex items-start text-sm text-gray-700">
                             <Check className="w-4 h-4 text-[#0D9488] mr-2 mt-0.5 flex-shrink-0" />
@@ -511,204 +512,80 @@ export function HomePage() {
                           </li>
                         ))}
                       </ul>
-
-                      <div className="mt-6">
-                        <Link
-                          to="/services"
-                          className="text-[#0D9488] font-semibold text-sm inline-flex items-center group"
-                        >
-                          Explore details
-                          <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
+                      <Link to="/services" className="text-[#0D9488] font-semibold text-sm inline-flex items-center group">
+                        Learn More
+                        <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     </CardContent>
                   </Card>
                 </motion.div>
               </ScrollReveal>
             ))}
           </div>
+
+          <ScrollReveal delay={0.4} className="text-center mt-12">
+            <p className="text-gray-600 mb-6">
+              Not sure what you need? We’ll guide you with a quick audit and clear recommendations.
+            </p>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block">
+              <Button
+                size="lg"
+                onClick={() => setAuditOpen(true)}
+                variant="outline"
+                className="border-2 border-[#0D9488] text-[#0D9488] hover:bg-[#0D9488] hover:text-white"
+              >
+                Request Complimentary Audit
+              </Button>
+            </motion.div>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* INDUSTRIES (preview) */}
-      <section className="py-24 bg-gray-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.10]">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
-              backgroundSize: "58px 58px",
-            }}
-          />
+      {/* Demo Showcase (same) */}
+      <section className="py-24 bg-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal className="text-center mb-16">
-            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">Industry Fit</span>
+            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">See It In Action</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mt-4 mb-6">
-              Built for SMEs That Need Clarity, Speed & Control
+              Live Feature Demos
             </h2>
-            <p className="text-xl text-white/65 max-w-3xl mx-auto">
-              We adapt the system architecture to your workflow—so your digital presence and operations stay aligned.
-            </p>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {industries.map((item, i) => (
-              <ScrollReveal key={i} delay={i * 0.08} direction={i % 2 === 0 ? "left" : "right"}>
-                <Card className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors">
-                  <div className="relative aspect-[16/11] overflow-hidden">
-                    <motion.img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.08 }}
-                      transition={{ duration: 0.35 }}
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-gray-950/10 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">{item.title}</h3>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <ul className="space-y-2">
-                      {item.points.map((p) => (
-                        <li key={p} className="text-sm text-white/75 flex items-start gap-2">
-                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#06B6D4]" />
-                          <span>{p}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link to="/services">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="inline-block">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white/25 text-white hover:bg-white hover:text-gray-950 rounded-2xl h-14 px-8"
-                >
-                  Explore Industry Solutions
-                </Button>
-              </motion.div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW WE WORK */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal className="text-center mb-14">
-            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">How We Work</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-950 mt-4 mb-6">
-              Consultancy-Led Delivery. Engineering-Level Execution.
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              A structured method that keeps scope clear, progress visible, and outcomes measurable.
-            </p>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Audit & Strategy",
-                desc: "We understand your workflow, audience, and bottlenecks—then define the system blueprint.",
-                img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=650&fit=crop&q=80",
-              },
-              {
-                title: "System Architecture",
-                desc: "We plan the website + lead flow + CRM readiness + automation paths before we build.",
-                img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&h=650&fit=crop&q=80",
-              },
-              {
-                title: "Build & Integrate",
-                desc: "We implement with premium UI and robust integrations—no fragile shortcuts.",
-                img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&h=650&fit=crop&q=80",
-              },
-              {
-                title: "Optimise & Scale",
-                desc: "We refine conversion, automate follow-ups, and add reporting to keep improving results.",
-                img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=900&h=650&fit=crop&q=80",
-              },
-            ].map((step, i) => (
-              <ScrollReveal key={step.title} delay={i * 0.08}>
-                <Card className="rounded-3xl overflow-hidden border-2 hover:border-[#0D9488] transition-colors">
-                  <div className="relative aspect-[16/11] overflow-hidden">
-                    <motion.img
-                      src={step.img}
-                      alt={step.title}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.06 }}
-                      transition={{ duration: 0.35 }}
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <div className="w-10 h-10 rounded-2xl bg-gray-950 text-white flex items-center justify-center font-bold">
-                        {i + 1}
-                      </div>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-gray-950 mb-2">{step.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{step.desc}</p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* LIVE DEMOS (positioned as “system demonstrations”) */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal className="text-center mb-14">
-            <span className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider">Live Demonstrations</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-950 mt-4 mb-6">
-              See the System Feel — Not Just the Screens
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              This website is part portfolio, part proof. Explore realistic demonstrations of what we implement.
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              This website itself demonstrates our advanced capabilities—try the chatbot, explore the demos.
             </p>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {demos.map((d, i) => (
-              <ScrollReveal key={d.title} delay={i * 0.1} direction={i % 2 === 0 ? "left" : "right"}>
-                <Link to={d.link} className="group">
-                  <motion.div whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 260, damping: 22 }}>
-                    <Card className="rounded-3xl overflow-hidden border-2 hover:border-[#06B6D4] transition-colors">
-                      <div className="relative aspect-video overflow-hidden">
+            {demoShowcase.map((demo, index) => (
+              <ScrollReveal key={index} delay={index * 0.15} direction={index % 2 === 0 ? "left" : "right"}>
+                <Link to={demo.link}>
+                  <motion.div whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 300 }} className="group">
+                    <Card className="bg-gray-800 border-gray-700 overflow-hidden hover:border-[#06B6D4] transition-colors cursor-pointer">
+                      <div className="aspect-video relative overflow-hidden">
                         <motion.img
-                          src={d.image}
-                          alt={d.title}
+                          src={demo.image}
+                          alt={demo.title}
                           className="w-full h-full object-cover"
-                          whileHover={{ scale: 1.08 }}
-                          transition={{ duration: 0.35 }}
-                          loading="lazy"
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.3 }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/75 via-gray-950/10 to-transparent" />
-                        <div className="absolute top-4 right-4">
-                          <span className="bg-white/10 border border-white/15 text-white text-xs px-3 py-1 rounded-full font-semibold backdrop-blur">
-                            {d.tag}
+                        <div className="absolute top-3 right-3 z-10">
+                          <span className="bg-[#06B6D4] text-white text-xs px-3 py-1 rounded-full font-semibold shadow-lg">
+                            {demo.tag}
                           </span>
                         </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent" />
                       </div>
                       <CardContent className="p-6">
-                        <h3 className="text-xl font-bold text-gray-950 mb-2 group-hover:text-[#0D9488] transition-colors">
-                          {d.title}
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#06B6D4] transition-colors">
+                          {demo.title}
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4">{d.description}</p>
-                        <span className="text-[#0D9488] font-semibold text-sm inline-flex items-center">
-                          View demo
+                        <p className="text-gray-400 mb-4 text-sm">{demo.description}</p>
+                        <span className="text-[#06B6D4] font-semibold text-sm inline-flex items-center">
+                          Try Demo
                           <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </span>
                       </CardContent>
@@ -721,52 +598,44 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* FINAL CTA */}
+      {/* CTA Section (same feel, premium wording) */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D9488] via-[#0c8479] to-[#06B6D4]" />
         <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "50px 50px" }}
-          />
+          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Upgrade Your Digital Infrastructure?
+              Ready to Build Something That Actually Works?
             </h2>
             <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-              If you want premium design *and* systems that actually run your business better—let’s map it properly.
+              Let’s map your goals, fix the gaps, and build a system that converts—then scales.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="lg"
                   onClick={() => setAuditOpen(true)}
-                  className="bg-white text-gray-950 hover:bg-gray-100 text-lg px-10 h-14 rounded-2xl shadow-2xl"
+                  className="bg-white text-[#0D9488] hover:bg-gray-100 text-lg px-12 py-7 shadow-2xl"
                 >
                   Request Complimentary Audit
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </motion.div>
               <Link to="/contact">
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-white/60 text-white hover:bg-white hover:text-gray-950 text-lg px-10 h-14 rounded-2xl"
+                    className="border-2 border-white/70 text-white hover:bg-white hover:text-gray-900 text-lg px-12 py-7"
                   >
                     Contact Us
                   </Button>
                 </motion.div>
               </Link>
-            </div>
-
-            <div className="mt-8 text-sm text-white/80 inline-flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4" />
-              UK-based delivery • Remote-friendly • Structured process
             </div>
           </ScrollReveal>
         </div>
