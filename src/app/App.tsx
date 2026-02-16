@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Navigation } from "@/app/components/Navigation";
 import { Footer } from "@/app/components/Footer";
 import { CareersPage } from "@/app/pages/CareersPage";
+import { PrivacyPolicyPage } from "@/app/pages/PrivacyPolicyPage";
+import { TermsPage } from "@/app/pages/TermsPage";
+import { CookiePolicyPage } from "@/app/pages/CookiePolicyPage";
 
 import { HomePage } from "@/app/pages/HomePage";
 import { ServicesPage } from "@/app/pages/ServicesPage";
@@ -29,7 +32,9 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/careers" element={<CareersPage />} />
-
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookies" element={<CookiePolicyPage />} />
 
             {/* New structure (temporary mapping to existing pages until we update pages) */}
             <Route path="/solutions" element={<ServicesPage />} />
