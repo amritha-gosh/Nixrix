@@ -10,7 +10,6 @@ import {
   Sparkles,
   Loader2,
   ShieldCheck,
-  ClipboardCheck,
 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
@@ -22,30 +21,22 @@ import { ChatbotWidget } from "@/app/components/ChatbotWidget";
 import { SEOHead } from "@/app/components/SEOHead";
 import { motion } from "motion/react";
 
-type ContactLeadPayload = {
+type LeadPayload = {
   type: "CONTACT_FORM";
   name: string;
   email: string;
-  phone?: string;
-  businessType: string;
-  serviceInterest: string;
   message: string;
-  welcomeCode?: string;
   source: "contact";
   pageUrl: string;
+  meta?: Record<string, any>;
 };
 
 export function ContactPage() {
-  // Same code used on homepage
-  const WELCOME_CODE = "NIXWELCOME";
-
-  // Serverless endpoint (we’ll wire this next)
-  // Set in .env: VITE_LEAD_ENDPOINT="https://your-backend-domain/api/lead"
   const LEAD_ENDPOINT = (import.meta as any)?.env?.VITE_LEAD_ENDPOINT || "/api/lead";
 
   const serviceOptions = useMemo(
     () => [
-      { value: "full-system", label: "Full SME Digital System (Website + CRM + Automation + Dashboards)" },
+      { value: "full-system", label: "Full SME Digital System (Website + Lead Flow + CRM Readiness + Automation + Dashboards)" },
       { value: "website", label: "Conversion Website" },
       { value: "crm-automation", label: "CRM + Automation Workflows" },
       { value: "dashboards", label: "Dashboards & KPI Reporting" },
@@ -74,8 +65,6 @@ export function ContactPage() {
     businessType: "",
     serviceInterest: "full-system",
     message: "",
-    welcomeCode: "",
-    useWelcomeCode: true,
   });
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -85,11 +74,7 @@ export function ContactPage() {
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    if (type === "checkbox") {
-      setFormData((p) => ({ ...p, [name]: (e.target as HTMLInputElement).checked }));
-      return;
-    }
+    const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
@@ -120,17 +105,18 @@ export function ContactPage() {
     setStatus("loading");
     setStatusMsg("");
 
-    const payload: ContactLeadPayload = {
+    const payload: LeadPayload = {
       type: "CONTACT_FORM",
       name: formData.name.trim(),
       email: formData.email.trim(),
-      phone: formData.phone.trim() || undefined,
-      businessType: formData.businessType,
-      serviceInterest: formData.serviceInterest,
       message: formData.message.trim(),
-      welcomeCode: formData.useWelcomeCode ? (formData.welcomeCode.trim() || WELCOME_CODE) : undefined,
       source: "contact",
       pageUrl: window.location.href,
+      meta: {
+        phone: formData.phone.trim() || undefined,
+        businessType: formData.businessType,
+        serviceInterest: formData.serviceInterest,
+      },
     };
 
     try {
@@ -143,7 +129,7 @@ export function ContactPage() {
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 
       setStatus("success");
-      setStatusMsg("Thanks! We’ve received your message. We’ll get back to you as soon as possible.");
+      setStatusMsg("Thanks! We’ve received your message. We’ll get back to you shortly.");
 
       setTimeout(() => {
         setStatus("idle");
@@ -155,22 +141,20 @@ export function ContactPage() {
           businessType: "",
           serviceInterest: "full-system",
           message: "",
-          welcomeCode: "",
-          useWelcomeCode: true,
         });
-      }, 2500);
-    } catch (err) {
+      }, 2200);
+    } catch {
       setStatus("error");
-      setStatusMsg("Couldn’t send right now. Please try again in a moment, or email us directly.");
+      setStatusMsg("Couldn’t send right now. Please try again, or email us at hello@nixrix.com.");
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Contact NIXRIX – Free SME Tech Audit | Websites + CRM + Automation + Dashboards"
-        description="Book a free SME Tech Audit with Nixrix. We build full digital systems: conversion websites, lead capture + CRM-ready workflows, automation, and KPI dashboards."
-        keywords="SME tech audit, website and CRM, business automation, dashboards, contact Nixrix, Leeds digital solutions"
+        title="Contact NIXRIX – Free SME Tech Audit | Websites + Automation + Dashboards"
+        description="Book a complimentary SME Tech Audit with NIXRIX. We build conversion websites, CRM-ready lead flows, automation workflows, and KPI dashboards."
+        keywords="SME tech audit, website and automation, lead capture, dashboards, contact Nixrix, Leeds digital solutions"
       />
 
       <ChatbotWidget />
@@ -180,7 +164,10 @@ export function ContactPage() {
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
-            style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "50px 50px" }}
+            style={{
+              backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+              backgroundSize: "50px 50px",
+            }}
           />
         </div>
 
@@ -193,7 +180,7 @@ export function ContactPage() {
           >
             <div className="inline-flex items-center gap-2 mb-6 px-5 py-2.5 bg-[#06B6D4]/10 backdrop-blur-sm rounded-full border border-[#06B6D4]/30">
               <Sparkles className="w-4 h-4 text-[#06B6D4]" />
-              <span className="text-[#06B6D4] text-sm font-semibold">Free SME Tech Audit</span>
+              <span className="text-[#06B6D4] text-sm font-semibold">Complimentary SME Tech Audit</span>
             </div>
 
             <motion.h1
@@ -226,13 +213,17 @@ export function ContactPage() {
               <ScrollReveal>
                 <Card className="border-2 shadow-xl">
                   <CardContent className="p-6 md:p-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Book Your Free Audit</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Request Your Audit</h2>
                     <p className="text-gray-600 mb-8">
                       Share a few details — we’ll reply with a clear plan. No jargon, no pressure.
                     </p>
 
                     {status === "success" ? (
-                      <motion.div className="text-center py-12" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                      <motion.div
+                        className="text-center py-12"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                      >
                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
                           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
                         </motion.div>
@@ -241,7 +232,6 @@ export function ContactPage() {
                       </motion.div>
                     ) : (
                       <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Status banner */}
                         {status === "error" && (
                           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                             {statusMsg}
@@ -280,7 +270,7 @@ export function ContactPage() {
                               onChange={handleChange}
                               onFocus={() => setFocusedField("email")}
                               onBlur={() => setFocusedField(null)}
-                              placeholder="john@example.com"
+                              placeholder="you@business.com"
                               className={`transition-all ${focusedField === "email" ? "ring-2 ring-[#0D9488]" : ""}`}
                             />
                           </motion.div>
@@ -354,43 +344,6 @@ export function ContactPage() {
                           </select>
                         </motion.div>
 
-                        {/* Welcome code */}
-                        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-                          <div className="flex items-start gap-3">
-                            <input
-                              id="useWelcomeCode"
-                              name="useWelcomeCode"
-                              type="checkbox"
-                              checked={formData.useWelcomeCode}
-                              onChange={handleChange}
-                              className="mt-1 h-4 w-4 accent-[#0D9488]"
-                            />
-                            <div className="flex-1">
-                              <Label htmlFor="useWelcomeCode" className="font-semibold text-gray-900">
-                                Apply Welcome Code
-                              </Label>
-                              <p className="text-sm text-gray-600 mt-1">
-                                Use <span className="font-bold text-gray-900">{WELCOME_CODE}</span> to unlock the welcome offer.
-                              </p>
-
-                              {formData.useWelcomeCode && (
-                                <div className="mt-3">
-                                  <Input
-                                    name="welcomeCode"
-                                    value={formData.welcomeCode}
-                                    onChange={handleChange}
-                                    placeholder={WELCOME_CODE}
-                                    className="bg-white"
-                                  />
-                                  <p className="text-xs text-gray-500 mt-2">
-                                    Leave empty to auto-apply <span className="font-semibold">{WELCOME_CODE}</span>.
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
                         <motion.div whileFocus={{ scale: 1.01 }} className="space-y-2">
                           <Label htmlFor="message" className="font-medium">
                             Tell us what you want to achieve *
@@ -403,7 +356,7 @@ export function ContactPage() {
                             onChange={handleChange}
                             onFocus={() => setFocusedField("message")}
                             onBlur={() => setFocusedField(null)}
-                            placeholder="Example: We want more enquiries, better follow-up, and a dashboard to track leads and conversions…"
+                            placeholder="Example: We want more enquiries, better follow-up, and reporting to track conversions…"
                             rows={6}
                             className={`transition-all ${focusedField === "message" ? "ring-2 ring-[#0D9488]" : ""}`}
                           />
@@ -526,21 +479,6 @@ export function ContactPage() {
                         <span>If it’s a fit, we build and launch your system</span>
                       </li>
                     </ol>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4}>
-                <Card className="border-l-4 border-[#06B6D4] shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <ClipboardCheck className="w-5 h-5 text-[#0D9488]" />
-                      Welcome Code Offer
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Mention <strong className="text-gray-900">{WELCOME_CODE}</strong> to unlock the welcome offer on your first project.
-                      We’ll explain what’s included after reviewing your request.
-                    </p>
                   </CardContent>
                 </Card>
               </ScrollReveal>
