@@ -23,9 +23,9 @@ interface Message {
 
 type LeadPayload =
   | {
-      type: "LIVE_CHAT";
+      type: "CHAT_LIVE_REQUEST";
       name: string;
-      email: string;
+      email?: string;
       phone?: string;
       message?: string;
       source: "chatbot";
@@ -39,26 +39,13 @@ type LeadPayload =
       pageUrl: string;
     };
 
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
-
-function digitsOnly(str: string) {
-  return (str || "").replace(/[^\d]/g, "");
-}
-
 export function ChatbotWidget() {
   const LEAD_ENDPOINT = (import.meta as any)?.env?.VITE_LEAD_ENDPOINT || "/api/lead";
 
-  // Put your WhatsApp number here (country code + number, NO +, NO spaces)
-  // Example for UK: 44XXXXXXXXXX
-  const WHATSAPP_NUMBER = digitsOnly("447492712144");
-
-  const buildWhatsAppLink = (prefill: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(prefill)}`;
-
-  const buildEmailLink = (prefill: string) =>
-    `mailto:hello@nixrix.com?subject=${encodeURIComponent("NIXRIX Enquiry")}&body=${encodeURIComponent(prefill)}`;
+  // Use your business WhatsApp in international format WITHOUT "+"
+  // Default uses your footer number: 07492 712144 -> 447492712144
+  const WHATSAPP_NUMBER = ((import.meta as any)?.env?.VITE_WHATSAPP_NUMBER || "447492712144").replace(/\D/g, "");
+  const SUPPORT_EMAIL = (import.meta as any)?.env?.VITE_SUPPORT_EMAIL || "hello@nixrix.com";
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -78,14 +65,12 @@ export function ChatbotWidget() {
     email: "",
     phone: "",
     message: "",
-    preferred: "whatsapp" as "whatsapp" | "email" | "phone",
+    preferredContact: "whatsapp" as "whatsapp" | "email",
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
   useEffect(() => {
     scrollToBottom();
@@ -100,8 +85,7 @@ export function ChatbotWidget() {
           setMessages([
             {
               type: "bot",
-              text:
-                "👋 Hi! I’m the NIXRIX Assistant. We build modern websites that convert — with lead capture, automation, and dashboards when needed.",
+              text: "👋 Hi! I’m the NIXRIX Assistant. I can help with websites, lead capture, automation, dashboards, and SEO foundations.",
               timestamp: new Date(),
             },
           ]);
@@ -114,14 +98,13 @@ export function ChatbotWidget() {
                 ...prev,
                 {
                   type: "bot",
-                  text:
-                    "What would you like help with today? You can also request a callback from our team anytime.",
+                  text: "What would you like help with today? You can also request a callback from our team anytime.",
                   timestamp: new Date(),
                 },
               ]);
-            }, 900);
-          }, 1100);
-        }, 900);
+            }, 850);
+          }, 1000);
+        }, 850);
       }, 450);
     }
   }, [isOpen, messages.length]);
@@ -129,9 +112,12 @@ export function ChatbotWidget() {
   const quickReplies = [
     "What do you build for SMEs?",
     "Can you set up CRM + automation?",
-    "Do you offer a free audit?",
-    "How long does a project take?",
+    "Do you do dashboards & KPI reporting?",
+    "How does the process work?",
   ];
+
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const isValidPhone = (phone: string) => phone.replace(/\D/g, "").length >= 10;
 
   const getBotResponse = (userMessage: string): string => {
     const lower = userMessage.toLowerCase();
@@ -145,81 +131,49 @@ export function ChatbotWidget() {
       lower.includes("call") ||
       lower.includes("callback")
     ) {
-      return "Sure — tap **Request a Callback** below and share your details. You can choose WhatsApp, email, or phone.";
+      return "No problem — tap **Request Callback** below and share your details (WhatsApp or Email).";
     }
 
     if (lower.includes("service") || lower.includes("offer") || lower.includes("do") || lower.includes("build")) {
       return (
         "We build **full SME digital systems**, not just websites:\n\n" +
-        "✅ Conversion website (clear messaging + strong CTAs)\n" +
-        "✅ Lead capture + CRM-ready tracking\n" +
+        "✅ Conversion Website (clear messaging + strong CTAs)\n" +
+        "✅ Lead Capture + CRM-ready tracking\n" +
         "✅ Automation workflows (follow-ups, tasks, handovers)\n" +
-        "✅ KPI dashboards & reporting\n" +
+        "✅ KPI Dashboards & reporting\n" +
         "✅ SEO foundations & visibility\n\n" +
-        "Tell me your business type and your #1 goal — more leads, better follow-up, or better visibility?"
-      );
-    }
-
-    if (lower.includes("audit") || lower.includes("free") || lower.includes("review") || lower.includes("offer")) {
-      return (
-        "Yes — we offer a **Complimentary Digital Systems Audit**.\n\n" +
-        "We’ll review your website + enquiry flow and suggest improvements for conversion, CRM readiness, automation, and reporting.\n\n" +
-        "Tap **Request a Callback** and we’ll share next steps."
-      );
-    }
-
-    if (lower.includes("cost") || lower.includes("price") || lower.includes("pricing") || lower.includes("budget")) {
-      return (
-        "We don’t use one-size pricing because every business is different.\n\n" +
-        "After a quick call, we’ll send a clear proposal based on scope, integrations, and timeline.\n\n" +
-        "If you want, request a callback and we’ll map it properly."
-      );
-    }
-
-    if (
-      lower.includes("time") ||
-      lower.includes("long") ||
-      lower.includes("fast") ||
-      lower.includes("timeline")
-    ) {
-      return (
-        "Delivery depends on scope, but the process is:\n\n" +
-        "1) Audit & plan\n" +
-        "2) Build & review\n" +
-        "3) Launch & improve\n\n" +
-        "Tell me what you need (website only vs full system) and I’ll guide you on a realistic timeline."
+        "What’s your business type and your #1 goal (more leads / better follow-up / better visibility)?"
       );
     }
 
     if (lower.includes("dashboard") || lower.includes("kpi") || lower.includes("power bi") || lower.includes("analytics")) {
       return (
         "Yes — we can embed dashboards and track KPIs like:\n\n" +
-        "📊 leads, conversions, enquiries\n" +
+        "📊 leads & conversions\n" +
         "📈 sales performance\n" +
         "🧾 pipeline stages\n" +
         "⏱ response times\n\n" +
-        "We also add plain-language insights so it’s easy to understand."
+        "If you want, request a callback and we’ll suggest the best setup for your workflow."
       );
     }
 
     if (lower.includes("crm") || lower.includes("automation") || lower.includes("workflow") || lower.includes("follow up")) {
       return (
         "Absolutely. We can set up:\n\n" +
-        "⚡ lead capture → CRM pipeline\n" +
-        "📧 automated follow-ups\n" +
+        "⚡ website lead capture → CRM pipeline\n" +
+        "📧 or 💬 automated follow-ups\n" +
         "✅ tasks/reminders for your team\n" +
-        "📄 proposal / onboarding workflow (optional)\n\n" +
-        "Want us to review your current process? Tap **Request a Callback** below."
+        "📄 onboarding workflow (optional)\n\n" +
+        "Tap **Request Callback** and we’ll review your current process."
       );
     }
 
-    if (lower.includes("contact") || lower.includes("email") || lower.includes("whatsapp") || lower.includes("reach")) {
+    if (lower.includes("contact") || lower.includes("email") || lower.includes("whatsapp")) {
       return (
-        "You can reach us via:\n\n" +
-        "📧 hello@nixrix.com\n" +
-        "📱 WhatsApp available\n" +
-        "📍 Leeds, UK\n\n" +
-        "Or request a callback using the button below."
+        "You can reach us at:\n\n" +
+        `📧 ${SUPPORT_EMAIL}\n` +
+        "💬 WhatsApp (tap the WhatsApp button in the callback form)\n\n" +
+        "Or request a callback via the button below."
       );
     }
 
@@ -229,7 +183,7 @@ export function ChatbotWidget() {
     );
   };
 
-  const pushBotMessage = (text: string, delay = 900) => {
+  const pushBotMessage = (text: string, delay = 850) => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
@@ -240,23 +194,17 @@ export function ChatbotWidget() {
   const handleSend = () => {
     if (!message.trim()) return;
 
-    const userText = message;
+    const userText = message.trim();
 
-    const userMessage: Message = {
-      type: "user",
-      text: userText,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, { type: "user", text: userText, timestamp: new Date() }]);
     setMessage("");
 
-    pushBotMessage(getBotResponse(userText), 900 + Math.random() * 600);
+    pushBotMessage(getBotResponse(userText), 850 + Math.random() * 500);
   };
 
   const handleQuickReply = (reply: string) => {
     setMessage(reply);
-    setTimeout(() => handleSend(), 100);
+    setTimeout(handleSend, 80);
   };
 
   const openLeadForm = () => {
@@ -266,12 +214,31 @@ export function ChatbotWidget() {
 
     setMessages((prev) => [
       ...prev,
-      {
-        type: "system",
-        text: "🔔 Great — share your details below and we’ll get back to you.",
-        timestamp: new Date(),
-      },
+      { type: "system", text: "🔔 Great — share your details below and we’ll get back to you.", timestamp: new Date() },
     ]);
+  };
+
+  const buildWhatsappLink = () => {
+    const text =
+      `Hi NIXRIX, I’d like a callback.\n\n` +
+      `Name: ${lead.name || "-"}\n` +
+      `Email: ${lead.email || "-"}\n` +
+      `Phone: ${lead.phone || "-"}\n` +
+      `Message: ${lead.message || "-"}\n` +
+      `Page: ${window.location.href}`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  };
+
+  const buildMailtoLink = () => {
+    const subject = "NIXRIX Callback Request";
+    const body =
+      `Hi NIXRIX,\n\nI’d like a callback.\n\n` +
+      `Name: ${lead.name || "-"}\n` +
+      `Email: ${lead.email || "-"}\n` +
+      `Phone: ${lead.phone || "-"}\n` +
+      `Message: ${lead.message || "-"}\n` +
+      `Page: ${window.location.href}\n`;
+    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   const submitLead = async (e: React.FormEvent) => {
@@ -287,34 +254,36 @@ export function ChatbotWidget() {
       setLeadMsg("Please enter your name.");
       return;
     }
-    if (!isValidEmail(email)) {
-      setLeadStatus("error");
-      setLeadMsg("Please enter a valid email address.");
-      return;
+
+    // Require a contact method depending on preference
+    if (lead.preferredContact === "email") {
+      if (!isValidEmail(email)) {
+        setLeadStatus("error");
+        setLeadMsg("Please enter a valid email address.");
+        return;
+      }
+    } else {
+      if (!isValidPhone(phone)) {
+        setLeadStatus("error");
+        setLeadMsg("Please enter a valid WhatsApp/phone number.");
+        return;
+      }
     }
 
     setLeadStatus("loading");
     setLeadMsg("");
 
-    const meta = {
-      preferredContact: lead.preferred,
-      whatsappLink:
-        lead.preferred === "whatsapp" && WHATSAPP_NUMBER
-          ? buildWhatsAppLink(
-              `Hi NIXRIX — I requested a callback.\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nMessage: ${msg || "-"}`
-            )
-          : undefined,
-    };
-
     const payload: LeadPayload = {
-      type: "LIVE_CHAT", // ✅ THIS MATCHES YOUR lead.ts
+      type: "CHAT_LIVE_REQUEST",
       name,
-      email,
-      phone: phone || undefined,
-      message: msg || undefined,
+      email: email ? email : undefined,
+      phone: phone ? phone : undefined,
+      message: msg ? msg : undefined,
       source: "chatbot",
       pageUrl: window.location.href,
-      meta,
+      meta: {
+        preferredContact: lead.preferredContact,
+      },
     };
 
     try {
@@ -324,7 +293,10 @@ export function ChatbotWidget() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      if (!res.ok) {
+        const details = await res.text().catch(() => "");
+        throw new Error(details || `Request failed: ${res.status}`);
+      }
 
       setLeadStatus("success");
       setLiveChatRequested(true);
@@ -332,35 +304,21 @@ export function ChatbotWidget() {
 
       setMessages((prev) => [
         ...prev,
-        {
-          type: "system",
-          text: "✅ Request received. Our team will contact you soon.",
-          timestamp: new Date(),
-        },
+        { type: "system", text: "✅ Request received. Our team will contact you soon.", timestamp: new Date() },
       ]);
 
+      // Return to chat after a moment
       setTimeout(() => {
         setMode("chat");
-        pushBotMessage(
-          "While you wait — tell me your business type and goal, and I’ll suggest the best setup.",
-          850
-        );
-      }, 900);
+        pushBotMessage("While you wait — tell me your business type and goal, and I’ll suggest the best setup.", 800);
+      }, 850);
 
-      setLead({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-        preferred: "whatsapp",
-      });
+      setLead({ name: "", email: "", phone: "", message: "", preferredContact: "whatsapp" });
     } catch {
       setLeadStatus("error");
-      setLeadMsg("Couldn’t send right now. Please try again, or contact us via WhatsApp/email.");
+      setLeadMsg("Couldn’t send right now. Please try again, or message us on WhatsApp / email.");
     }
   };
-
-  const prefillText = `Hi NIXRIX — I’m enquiring from the website.\n\nName: ${lead.name || "-"}\nEmail: ${lead.email || "-"}\nPhone: ${lead.phone || "-"}\nMessage: ${lead.message || "-"}`;
 
   return (
     <>
@@ -481,7 +439,11 @@ export function ChatbotWidget() {
                     <p className="text-sm whitespace-pre-line leading-relaxed">{msg.text}</p>
                     <p
                       className={`text-xs mt-1 ${
-                        msg.type === "bot" ? "text-gray-400" : msg.type === "system" ? "text-blue-400" : "text-white/70"
+                        msg.type === "bot"
+                          ? "text-gray-400"
+                          : msg.type === "system"
+                          ? "text-blue-400"
+                          : "text-white/70"
                       }`}
                     >
                       {msg.timestamp.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
@@ -534,33 +496,37 @@ export function ChatbotWidget() {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div>
                       <div className="font-semibold text-gray-900">Request a callback</div>
-                      <div className="text-xs text-gray-500 mt-1">Choose WhatsApp, email, or phone — we’ll follow up.</div>
-                    </div>
-                    <div className="text-xs bg-gradient-to-r from-[#06B6D4]/15 to-[#0D9488]/15 border border-[#0D9488]/20 px-3 py-1.5 rounded-full font-semibold text-gray-800">
-                      Complimentary Audit
+                      <div className="text-xs text-gray-500 mt-1">Choose WhatsApp or Email — we’ll contact you soon.</div>
                     </div>
                   </div>
 
                   {/* Preferred contact */}
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    {[
-                      { key: "whatsapp", label: "WhatsApp" },
-                      { key: "email", label: "Email" },
-                      { key: "phone", label: "Phone" },
-                    ].map((o) => (
-                      <button
-                        key={o.key}
-                        type="button"
-                        onClick={() => setLead((p) => ({ ...p, preferred: o.key as any }))}
-                        className={`text-xs rounded-xl border px-3 py-2 font-semibold transition ${
-                          lead.preferred === o.key
-                            ? "border-[#0D9488] bg-[#0D9488]/10 text-gray-900"
-                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        {o.label}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setLead((p) => ({ ...p, preferredContact: "whatsapp" }))}
+                      className={`rounded-xl border px-3 py-2 text-sm font-semibold flex items-center justify-center gap-2 transition ${
+                        lead.preferredContact === "whatsapp"
+                          ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]"
+                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <Phone className="w-4 h-4" />
+                      WhatsApp
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setLead((p) => ({ ...p, preferredContact: "email" }))}
+                      className={`rounded-xl border px-3 py-2 text-sm font-semibold flex items-center justify-center gap-2 transition ${
+                        lead.preferredContact === "email"
+                          ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]"
+                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </button>
                   </div>
 
                   <form onSubmit={submitLead} className="space-y-3">
@@ -574,23 +540,41 @@ export function ChatbotWidget() {
                       />
                     </div>
 
-                    <div className="relative">
-                      <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
+                    {lead.preferredContact === "email" ? (
+                      <div className="relative">
+                        <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          value={lead.email}
+                          onChange={(e) => setLead((p) => ({ ...p, email: e.target.value }))}
+                          placeholder="Email *"
+                          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/40 focus:border-[#06B6D4]/40"
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          value={lead.phone}
+                          onChange={(e) => setLead((p) => ({ ...p, phone: e.target.value }))}
+                          placeholder="WhatsApp number *"
+                          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/40 focus:border-[#06B6D4]/40"
+                        />
+                      </div>
+                    )}
+
+                    {/* Optional secondary field */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input
                         value={lead.email}
                         onChange={(e) => setLead((p) => ({ ...p, email: e.target.value }))}
-                        placeholder="Email *"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/40 focus:border-[#06B6D4]/40"
+                        placeholder="Email (optional)"
+                        className="bg-white"
                       />
-                    </div>
-
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
+                      <Input
                         value={lead.phone}
                         onChange={(e) => setLead((p) => ({ ...p, phone: e.target.value }))}
                         placeholder="Phone (optional)"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/40 focus:border-[#06B6D4]/40"
+                        className="bg-white"
                       />
                     </div>
 
@@ -625,29 +609,29 @@ export function ChatbotWidget() {
                       )}
                     </Button>
 
-                    {/* Quick contact buttons */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <a
-                        href={buildWhatsAppLink(prefillText)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-semibold"
-                      >
-                        WhatsApp Us
+                    {/* Direct contact buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <a href={buildWhatsappLink()} target="_blank" rel="noreferrer" className="w-full">
+                        <Button variant="outline" className="w-full border-2">
+                          WhatsApp Us
+                        </Button>
                       </a>
-                      <a
-                        href={buildEmailLink(prefillText)}
-                        className="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-semibold"
-                      >
-                        Email Us
+                      <a href={buildMailtoLink()} className="w-full">
+                        <Button variant="outline" className="w-full border-2">
+                          Email Us
+                        </Button>
                       </a>
                     </div>
 
                     {leadStatus === "error" && (
-                      <div className="text-xs rounded-xl px-3 py-2 border border-red-200 bg-red-50 text-red-700">{leadMsg}</div>
+                      <div className="text-xs rounded-xl px-3 py-2 border border-red-200 bg-red-50 text-red-700">
+                        {leadMsg}
+                      </div>
                     )}
                     {leadStatus === "success" && (
-                      <div className="text-xs rounded-xl px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-800">{leadMsg}</div>
+                      <div className="text-xs rounded-xl px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-800">
+                        {leadMsg}
+                      </div>
                     )}
 
                     <p className="text-[11px] text-gray-500 leading-relaxed">
@@ -660,7 +644,7 @@ export function ChatbotWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* CTA Button */}
+            {/* Request button */}
             {mode === "chat" && !liveChatRequested && messages.length > 0 && (
               <div className="px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border-t border-gray-200">
                 <motion.button
@@ -670,7 +654,7 @@ export function ChatbotWidget() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <User className="w-4 h-4" />
-                  Request a Callback
+                  Request Callback
                   <Phone className="w-4 h-4" />
                 </motion.button>
               </div>
