@@ -1,5 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, Send, Minimize2, User, Phone, Mail, Sparkles, Loader2, CheckCircle } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  Send,
+  Minimize2,
+  User,
+  Phone,
+  Mail,
+  Sparkles,
+  Loader2,
+  CheckCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -17,9 +28,9 @@ type LeadPayload =
       email: string;
       phone?: string;
       message?: string;
-      welcomeCode?: string;
       source: "chatbot";
       pageUrl: string;
+      meta?: Record<string, string>;
     }
   | {
       type: "CHAT_MESSAGE";
@@ -28,9 +39,30 @@ type LeadPayload =
       pageUrl: string;
     };
 
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function toWhatsAppNumber(raw: string) {
+  // keep digits only (WhatsApp needs country code, no +)
+  return raw.replace(/[^\d]/g, "");
+}
+
 export function ChatbotWidget() {
-  const WELCOME_CODE = "NIXWELCOME";
   const LEAD_ENDPOINT = (import.meta as any)?.env?.VITE_LEAD_ENDPOINT || "/api/lead";
+
+  // Update if your number changes (country code + number, no +)
+  const WHATSAPP_NUMBER = toWhatsAppNumber("447492712144");
+  const WHATSAPP_LINK = (prefill?: string) =>
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      prefill || "Hi NIXRIX — I requested a callback from your website."
+    )}`;
+
+  const EMAIL_LINK =
+    "mailto:hello@nixrix.com?subject=" +
+    encodeURIComponent("NIXRIX Enquiry") +
+    "&body=" +
+    encodeURIComponent("Hi NIXRIX — I requested a callback from your website.");
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -50,8 +82,7 @@ export function ChatbotWidget() {
     email: "",
     phone: "",
     message: "",
-    useWelcomeCode: true,
-    welcomeCode: "",
+    preferred: "whatsapp" as "whatsapp" | "email" | "phone",
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -66,7 +97,6 @@ export function ChatbotWidget() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Initial greeting after a short delay
       setTimeout(() => {
         setIsTyping(true);
         setTimeout(() => {
@@ -74,7 +104,8 @@ export function ChatbotWidget() {
           setMessages([
             {
               type: "bot",
-              text: "👋 Hi! I’m the NIXRIX Assistant. I can help you understand what we build — websites with built-in intelligence (lead capture, automation, dashboards).",
+              text:
+                "👋 Hi! I’m the NIXRIX Assistant. We build modern websites with built-in lead capture, CRM-ready tracking, automation, and dashboards.",
               timestamp: new Date(),
             },
           ]);
@@ -100,12 +131,10 @@ export function ChatbotWidget() {
 
   const quickReplies = [
     "What do you build for SMEs?",
-    "How does the welcome code work?",
     "Can you set up CRM + automation?",
+    "Do you offer a free audit?",
     "How long does a project take?",
   ];
-
-  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const getBotResponse = (userMessage: string): string => {
     const lower = userMessage.toLowerCase();
@@ -121,35 +150,39 @@ export function ChatbotWidget() {
       lower.includes("call") ||
       lower.includes("callback")
     ) {
-      return "No problem — you can request a callback from our team. Tap **Request Live Chat with Team** below and enter your details.";
+      return "Sure — tap **Request a Callback** below and share your details. We can reply by WhatsApp, email, or phone.";
     }
 
     // Services
     if (lower.includes("service") || lower.includes("offer") || lower.includes("do") || lower.includes("build")) {
       return (
         "We build **full SME digital systems**, not just websites:\n\n" +
-        "✅ Conversion Website (clear messaging + strong CTAs)\n" +
-        "✅ Lead Capture + CRM-ready tracking\n" +
+        "✅ Conversion website (clear messaging + strong CTAs)\n" +
+        "✅ Lead capture + CRM-ready tracking\n" +
         "✅ Automation workflows (follow-ups, tasks, handovers)\n" +
-        "✅ KPI Dashboards & reporting\n" +
+        "✅ KPI dashboards & reporting\n" +
         "✅ SEO foundations & visibility\n\n" +
-        "Tell me your business type (Retail / Manufacturing / Services) and your main goal — more leads, better follow-up, or better visibility?"
+        "What’s your business type (Retail / Manufacturing / Services) and your #1 goal — more leads, better follow-up, or better visibility?"
       );
     }
 
-    // Welcome code
-    if (lower.includes("welcome") || lower.includes("code") || lower.includes("offer")) {
+    // Audit / free offer (corporate replacement for welcome code)
+    if (lower.includes("audit") || lower.includes("free") || lower.includes("offer") || lower.includes("review")) {
       return (
-        "Our **Welcome Code** is a limited-time offer for first-time clients.\n\n" +
-        "If you request a callback and mention the code, we’ll include bonus setup in your rollout plan.\n\n" +
-        "Tap **Request Live Chat with Team** and we’ll email you the details."
+        "We offer a **Complimentary Digital Systems Audit** for SMEs.\n\n" +
+        "We’ll review your website + lead flow and suggest improvements for:\n" +
+        "• conversion & messaging\n" +
+        "• CRM readiness\n" +
+        "• automation workflows\n" +
+        "• reporting & dashboards\n\n" +
+        "Tap **Request a Callback** and we’ll share next steps."
       );
     }
 
     // Pricing-like questions (no numbers)
     if (lower.includes("cost") || lower.includes("price") || lower.includes("pricing") || lower.includes("budget")) {
       return (
-        "We don’t use one-size pricing because every SME system is different.\n\n" +
+        "We don’t use one-size pricing because every business system is different.\n\n" +
         "After a quick audit call, we’ll send a clear proposal based on:\n" +
         "• pages/features\n" +
         "• CRM + automation needs\n" +
@@ -160,18 +193,30 @@ export function ChatbotWidget() {
     }
 
     // Timeline
-    if (lower.includes("time") || lower.includes("long") || lower.includes("fast") || lower.includes("quick") || lower.includes("timeline")) {
+    if (
+      lower.includes("time") ||
+      lower.includes("long") ||
+      lower.includes("fast") ||
+      lower.includes("quick") ||
+      lower.includes("timeline")
+    ) {
       return (
         "Typical delivery depends on scope, but the process is:\n\n" +
         "1) Audit & plan\n" +
         "2) Build & review\n" +
         "3) Launch & improve\n\n" +
-        "If you share what you need (website only vs full system), I can guide you on a realistic timeline."
+        "If you tell me what you need (website only vs full system), I can guide you on a realistic timeline."
       );
     }
 
     // Dashboards / analytics
-    if (lower.includes("dashboard") || lower.includes("kpi") || lower.includes("power bi") || lower.includes("data") || lower.includes("analytics")) {
+    if (
+      lower.includes("dashboard") ||
+      lower.includes("kpi") ||
+      lower.includes("power bi") ||
+      lower.includes("data") ||
+      lower.includes("analytics")
+    ) {
       return (
         "Yes — we can embed dashboards and track KPIs like:\n\n" +
         "📊 leads, conversions, enquiries\n" +
@@ -190,17 +235,18 @@ export function ChatbotWidget() {
         "📧 automated follow-ups\n" +
         "✅ tasks/reminders for your team\n" +
         "📄 proposal / onboarding workflow (optional)\n\n" +
-        "Want the callback team to review your current process? Tap the button below."
+        "Want our team to review your current process? Tap **Request a Callback** below."
       );
     }
 
     // Contact info
-    if (lower.includes("contact") || lower.includes("email") || lower.includes("reach")) {
+    if (lower.includes("contact") || lower.includes("email") || lower.includes("reach") || lower.includes("whatsapp")) {
       return (
-        "You can reach us at:\n\n" +
+        "You can reach us via:\n\n" +
         "📧 hello@nixrix.com\n" +
+        "📱 WhatsApp available\n" +
         "📍 Leeds, UK\n\n" +
-        "Or request a callback via the button below."
+        "Or request a callback using the button below."
       );
     }
 
@@ -231,9 +277,6 @@ export function ChatbotWidget() {
     setMessages((prev) => [...prev, userMessage]);
     setMessage("");
 
-    // Optional: send chat message to backend later (not required for launch)
-    // const payload: LeadPayload = { type: "CHAT_MESSAGE", message: userText, source: "chatbot", pageUrl: window.location.href };
-
     pushBotMessage(getBotResponse(userText), 900 + Math.random() * 600);
   };
 
@@ -247,7 +290,6 @@ export function ChatbotWidget() {
     setLeadStatus("idle");
     setLeadMsg("");
 
-    // Add system message
     setMessages((prev) => [
       ...prev,
       {
@@ -286,9 +328,12 @@ export function ChatbotWidget() {
       email,
       phone: phone || undefined,
       message: msg || undefined,
-      welcomeCode: lead.useWelcomeCode ? (lead.welcomeCode.trim() || WELCOME_CODE) : undefined,
       source: "chatbot",
       pageUrl: window.location.href,
+      meta: {
+        preferredContact: lead.preferred,
+        channelHint: "chatbot",
+      },
     };
 
     try {
@@ -313,7 +358,18 @@ export function ChatbotWidget() {
         },
       ]);
 
-      // Return to chat after a moment
+      // Helpful WhatsApp prompt (optional)
+      if (lead.preferred === "whatsapp") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "bot",
+            text: "If you want the fastest response, you can also WhatsApp us now using the button in the form.",
+            timestamp: new Date(),
+          },
+        ]);
+      }
+
       setTimeout(() => {
         setMode("chat");
         pushBotMessage("While you wait — tell me your business type and goal, and I’ll suggest the best setup.", 850);
@@ -324,12 +380,11 @@ export function ChatbotWidget() {
         email: "",
         phone: "",
         message: "",
-        useWelcomeCode: true,
-        welcomeCode: "",
+        preferred: "whatsapp",
       });
     } catch (err) {
       setLeadStatus("error");
-      setLeadMsg("Couldn’t send right now. Please try again, or email hello@nixrix.com.");
+      setLeadMsg("Couldn’t send right now. Please try again, or message us on WhatsApp / email hello@nixrix.com.");
     }
   };
 
@@ -389,7 +444,11 @@ export function ChatbotWidget() {
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors" aria-label="Minimize">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="Minimize"
+                >
                   <Minimize2 className="w-5 h-5" />
                 </button>
               </div>
@@ -462,9 +521,21 @@ export function ChatbotWidget() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
                   <div className="max-w-[80%] p-3 rounded-2xl bg-white shadow-sm border border-gray-200">
                     <div className="flex gap-1">
-                      <motion.span className="w-2 h-2 bg-gray-400 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
-                      <motion.span className="w-2 h-2 bg-gray-400 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
-                      <motion.span className="w-2 h-2 bg-gray-400 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
+                      <motion.span
+                        className="w-2 h-2 bg-gray-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                      />
+                      <motion.span
+                        className="w-2 h-2 bg-gray-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                      />
+                      <motion.span
+                        className="w-2 h-2 bg-gray-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                      />
                     </div>
                   </div>
                 </motion.div>
@@ -504,8 +575,30 @@ export function ChatbotWidget() {
                       <div className="text-xs text-gray-500 mt-1">Enter your details — we’ll contact you soon.</div>
                     </div>
                     <div className="text-xs bg-gradient-to-r from-[#06B6D4]/15 to-[#0D9488]/15 border border-[#0D9488]/20 px-3 py-1.5 rounded-full font-semibold text-gray-800">
-                      Code: {WELCOME_CODE}
+                      Complimentary Audit
                     </div>
+                  </div>
+
+                  {/* Preferred contact */}
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    {[
+                      { key: "whatsapp", label: "WhatsApp" },
+                      { key: "email", label: "Email" },
+                      { key: "phone", label: "Phone" },
+                    ].map((o) => (
+                      <button
+                        key={o.key}
+                        type="button"
+                        onClick={() => setLead((p) => ({ ...p, preferred: o.key as any }))}
+                        className={`text-xs rounded-xl border px-3 py-2 font-semibold transition ${
+                          lead.preferred === o.key
+                            ? "border-[#0D9488] bg-[#0D9488]/10 text-gray-900"
+                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {o.label}
+                      </button>
+                    ))}
                   </div>
 
                   <form onSubmit={submitLead} className="space-y-3">
@@ -547,26 +640,6 @@ export function ChatbotWidget() {
                       className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/40 focus:border-[#06B6D4]/40"
                     />
 
-                    <label className="flex items-start gap-2 text-xs text-gray-600">
-                      <input
-                        type="checkbox"
-                        checked={lead.useWelcomeCode}
-                        onChange={(e) => setLead((p) => ({ ...p, useWelcomeCode: e.target.checked }))}
-                        className="mt-0.5 h-4 w-4 accent-[#0D9488]"
-                      />
-                      Apply Welcome Code
-                      <span className="font-semibold text-gray-800">{WELCOME_CODE}</span>
-                    </label>
-
-                    {lead.useWelcomeCode && (
-                      <Input
-                        value={lead.welcomeCode}
-                        onChange={(e) => setLead((p) => ({ ...p, welcomeCode: e.target.value }))}
-                        placeholder={WELCOME_CODE}
-                        className="bg-white"
-                      />
-                    )}
-
                     <Button
                       type="submit"
                       className="w-full bg-gradient-to-r from-[#0D9488] to-[#06B6D4] text-white"
@@ -590,6 +663,26 @@ export function ChatbotWidget() {
                       )}
                     </Button>
 
+                    {/* WhatsApp + Email quick actions */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <a
+                        href={WHATSAPP_LINK(
+                          `Hi NIXRIX — I requested a callback.\nName: ${lead.name || "—"}\nEmail: ${lead.email || "—"}`
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-semibold"
+                      >
+                        WhatsApp Us
+                      </a>
+                      <a
+                        href={EMAIL_LINK}
+                        className="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-semibold"
+                      >
+                        Email Us
+                      </a>
+                    </div>
+
                     {leadStatus === "error" && (
                       <div className="text-xs rounded-xl px-3 py-2 border border-red-200 bg-red-50 text-red-700">{leadMsg}</div>
                     )}
@@ -607,7 +700,7 @@ export function ChatbotWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Live Chat Request Button */}
+            {/* CTA Button */}
             {mode === "chat" && !liveChatRequested && messages.length > 0 && (
               <div className="px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border-t border-gray-200">
                 <motion.button
@@ -617,7 +710,7 @@ export function ChatbotWidget() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <User className="w-4 h-4" />
-                  Request Live Chat with Team
+                  Request a Callback
                   <Phone className="w-4 h-4" />
                 </motion.button>
               </div>
