@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Logo } from "@/app/components/Logo";
 
-type NavLink = { name: string; path: string; match?: "exact" | "startsWith"; aliases?: string[] };
+type NavLink = { name: string; path: string; match?: "exact" | "startsWith" };
 
 export function Navigation() {
   const location = useLocation();
@@ -17,38 +17,46 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Scroll to top when route changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   const navLinks: NavLink[] = [
     { name: "Home", path: "/", match: "exact" },
 
-    // ✅ Services (new primary)
-    { name: "Services", path: "/services", match: "startsWith", aliases: ["/solutions"] },
+    // Renamed: Solutions -> Services
+    // Use /services as the real route. We'll still support /solutions as legacy.
+    { name: "Services", path: "/services", match: "startsWith" },
 
-    // ✅ Case Studies / Work
-    { name: "Case Studies", path: "/case-studies", match: "startsWith", aliases: ["/work"] },
+    // Keep Case Studies (good corporate page)
+    { name: "Case Studies", path: "/case-studies", match: "startsWith" },
 
-    // ✅ Process page rename
-    { name: "How We Work", path: "/how-we-work", match: "exact", aliases: ["/how-it-works"] },
+    // Renamed: How It Works -> How We Work
+    { name: "How We Work", path: "/how-we-work", match: "exact" },
 
+    // Keep Contact
     { name: "Contact", path: "/contact", match: "exact" },
   ];
 
   const isActive = (link: NavLink) => {
     const p = location.pathname;
 
-    if (link.match === "exact") {
-      if (p === link.path) return true;
-      if (link.aliases?.some((a) => p === a)) return true;
-      return false;
-    }
+    if (link.match === "exact") return p === link.path;
 
-    // startsWith
+    // startsWith match
     if (p.startsWith(link.path)) return true;
-    if (link.aliases?.some((a) => p.startsWith(a))) return true;
+
+    // Transitional mapping so old URLs still highlight correctly
+    if (link.path === "/services" && p.startsWith("/solutions")) return true;
+    if (link.path === "/case-studies" && (p.startsWith("/work") || p.startsWith("/portfolio"))) return true;
+    if (link.path === "/how-we-work" && p.startsWith("/how-it-works")) return true;
+
     return false;
   };
 
