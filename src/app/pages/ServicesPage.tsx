@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
-import { Globe, MessageSquare, BarChart3, Zap, Search, ArrowRight, Check, ChevronDown } from 'lucide-react';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
-import { ScrollReveal } from '@/app/components/ScrollReveal';
-import { ChatbotWidget } from '@/app/components/ChatbotWidget';
-import { SEOHead } from '@/app/components/SEOHead';
-import { motion } from 'motion/react';
-import { useState } from 'react';
+import { Link } from "react-router-dom";
+import { Globe, MessageSquare, BarChart3, Zap, Search, ArrowRight, Check } from "lucide-react";
+import { Button } from "@/app/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { ChatbotWidget } from "@/app/components/ChatbotWidget";
+import { SEOHead } from "@/app/components/SEOHead";
+import { motion } from "motion/react";
 import {
   Accordion,
   AccordionContent,
@@ -17,128 +16,164 @@ import {
 export function ServicesPage() {
   const serviceGroups = [
     {
-      id: 'website-design',
+      id: "website-design",
       icon: <Globe className="w-12 h-12" />,
-      title: 'Website Design (Core)',
-      tagline: 'Professional, responsive websites built for growth',
-      description: 'From single-page sites to full business platforms—clean, fast, mobile-ready, and SEO-optimized from day one.',
-      pricing: 'Starting from £199',
+      title: "Website Design (Core)",
+      tagline: "Professional, responsive websites built for growth",
+      description:
+        "From single-page sites to full business platforms—clean, fast, mobile-ready, and SEO-optimized from day one.",
+      pricing: "Starting from £199",
       services: [
-        { name: 'One-Page Websites', desc: 'Perfect for landing pages, portfolios, or campaign sites' },
-        { name: 'Business Websites', desc: 'Multi-page sites for service businesses and SMEs' },
-        { name: 'Portfolio Websites', desc: 'Showcase your work beautifully with modern design' },
-        { name: 'E-commerce Ready', desc: 'Online stores with product catalogues and checkout' }
+        { name: "One-Page Websites", desc: "Perfect for landing pages, portfolios, or campaign sites" },
+        { name: "Business Websites", desc: "Multi-page sites for service businesses and SMEs" },
+        { name: "Portfolio Websites", desc: "Showcase your work beautifully with modern design" },
+        { name: "E-commerce Ready", desc: "Online stores with product catalogues and checkout" },
       ],
       features: [
-        'Mobile-first responsive design',
-        'Performance optimization',
-        'On-page SEO ready',
-        'Content management system',
-        'Contact forms & integrations',
-        'SSL security & hosting setup'
+        "Mobile-first responsive design",
+        "Performance optimization",
+        "On-page SEO ready",
+        "Content management system",
+        "Contact forms & integrations",
+        "SSL security & hosting setup",
       ],
-      benefits: 'Great for businesses that need a strong digital presence without complexity.'
+      benefits: "Great for businesses that need a strong digital presence without complexity.",
     },
     {
-      id: 'ai-chatbots',
+      id: "ai-chatbots",
       icon: <MessageSquare className="w-12 h-12" />,
-      title: 'Websites with AI Chatbots',
-      tagline: 'Engage visitors 24/7 with intelligent automation',
-      description: 'Add AI-powered chatbots to your website for automated support, lead capture, and customer engagement.',
-      pricing: 'Website + Chatbot from £399',
+      title: "Websites with AI Chatbots",
+      tagline: "Engage visitors 24/7 with intelligent automation",
+      description:
+        "Add AI-powered chatbots to your website for automated support, lead capture, and customer engagement.",
+      pricing: "Website + Chatbot from £399",
       services: [
-        { name: 'FAQ Chatbots', desc: 'Answer common questions automatically' },
-        { name: 'Lead Capture Bots', desc: 'Qualify and capture leads while you sleep' },
-        { name: 'Support Chatbots', desc: '24/7 customer support automation' },
-        { name: 'Custom Training', desc: 'Trained on your business content and FAQs' }
+        { name: "FAQ Chatbots", desc: "Answer common questions automatically" },
+        { name: "Lead Capture Bots", desc: "Qualify and capture leads while you sleep" },
+        { name: "Support Chatbots", desc: "24/7 customer support automation" },
+        { name: "Custom Training", desc: "Trained on your business content and FAQs" },
       ],
       features: [
-        'AI-powered conversations',
-        'Custom training on your content',
-        'Lead capture & qualification',
-        'Multi-language support',
-        'CRM integration',
-        '24/7 availability'
+        "AI-powered conversations",
+        "Custom training on your content",
+        "Lead capture & qualification",
+        "Multi-language support",
+        "CRM integration",
+        "24/7 availability",
       ],
-      benefits: 'Perfect for businesses wanting to automate customer engagement and capture more leads.'
+      benefits: "Perfect for businesses wanting to automate customer engagement and capture more leads.",
     },
+
+    // ✅ NEW (3rd) — Ecommerce + ERP Integration (Shopify + WooCommerce included)
     {
-      id: 'intelligent-websites',
+      id: "ecommerce-erp",
+      icon: <Globe className="w-12 h-12" />,
+      title: "E-commerce + ERP Integration",
+      tagline: "Sell online with stock, orders, and operations connected",
+      description:
+        "We build and manage Shopify and WooCommerce stores (and custom e-commerce), and integrate them with ERP/stock systems so inventory, orders, pricing, and fulfilment stay in sync.",
+      pricing: "Contact for custom quote",
+      services: [
+        { name: "Shopify Store Setup & Management", desc: "Theme setup, products, payments, shipping, and ongoing store support" },
+        { name: "WooCommerce Store Setup & Management", desc: "WordPress + WooCommerce setup, optimization, and maintenance" },
+        { name: "ERP / Stock Integration", desc: "Sync inventory, orders, invoices, pricing, and customer data between systems" },
+        { name: "Operations Workflow (Optional)", desc: "Order → fulfilment → updates → reporting (ideal for restaurants & service ops)" },
+      ],
+      features: [
+        "Inventory & stock sync (near real-time)",
+        "Order & fulfilment workflow automation",
+        "Product catalogue + variants setup",
+        "Payments, shipping & tax configuration",
+        "Operational dashboards & reporting",
+        "Integrations with ERP/CRM/tools",
+      ],
+      benefits:
+        "Best for e-commerce brands, wholesalers, and restaurants that need online sales plus operational control (stock, orders, fulfilment).",
+    },
+
+    // (This becomes 4th now)
+    {
+      id: "intelligent-websites",
       icon: <BarChart3 className="w-12 h-12" />,
-      title: 'Intelligent Websites (Advanced)',
-      tagline: 'Websites with embedded KPI dashboards & insights',
-      description: 'Turn your website into a business intelligence tool with live dashboards, automated insights, and data-driven decision making.',
-      pricing: 'Contact for custom quote',
+      title: "Intelligent Websites (Advanced)",
+      tagline: "Websites with embedded KPI dashboards & insights",
+      description:
+        "Turn your website into a business intelligence tool with live dashboards, automated insights, and data-driven decision making.",
+      pricing: "Contact for custom quote",
       services: [
-        { name: 'Power BI Dashboard Integration', desc: 'Embed live dashboards directly into your site' },
-        { name: 'Real-Time Data Refresh', desc: 'Auto-updating metrics and KPIs' },
-        { name: 'Plain-Language Insights', desc: 'Explanations next to every metric' },
-        { name: 'Automated Alerts', desc: 'Get notified when KPIs hit thresholds' }
+        { name: "Power BI Dashboard Integration", desc: "Embed live dashboards directly into your site" },
+        { name: "Real-Time Data Refresh", desc: "Auto-updating metrics and KPIs" },
+        { name: "Plain-Language Insights", desc: "Explanations next to every metric" },
+        { name: "Automated Alerts", desc: "Get notified when KPIs hit thresholds" },
       ],
       features: [
-        'Power BI dashboard embedding',
-        'Live or scheduled data refresh',
-        'KPI explanations in plain English',
-        'Automated email/Slack alerts',
-        'Multiple data source connections',
-        'Custom metric tracking'
+        "Power BI dashboard embedding",
+        "Live or scheduled data refresh",
+        "KPI explanations in plain English",
+        "Automated email/Slack alerts",
+        "Multiple data source connections",
+        "Custom metric tracking",
       ],
-      benefits: 'Ideal for data-driven businesses that want insights and metrics directly on their website.'
+      benefits:
+        "Ideal for data-driven businesses that want insights and metrics directly on their website.",
     },
     {
-      id: 'automation-seo',
+      id: "automation-seo",
       icon: <Zap className="w-12 h-12" />,
-      title: 'Automation & Optimization',
-      tagline: 'Make your website work smarter',
-      description: 'Workflow automation, lead follow-ups, and advanced optimization to maximize your website performance.',
-      pricing: 'Add-on from £149',
+      title: "Automation & Optimization",
+      tagline: "Make your website work smarter",
+      description:
+        "Workflow automation, lead follow-ups, and advanced optimization to maximize your website performance.",
+      pricing: "Add-on from £149",
       services: [
-        { name: 'Workflow Automation', desc: 'Automate repetitive tasks and processes' },
-        { name: 'Lead Follow-Up Automation', desc: 'Automatic email sequences for new leads' },
-        { name: 'Data-Triggered Actions', desc: 'Actions based on user behavior or metrics' },
-        { name: 'Business Process Optimization', desc: 'Streamline operations through automation' }
+        { name: "Workflow Automation", desc: "Automate repetitive tasks and processes" },
+        { name: "Lead Follow-Up Automation", desc: "Automatic email sequences for new leads" },
+        { name: "Data-Triggered Actions", desc: "Actions based on user behavior or metrics" },
+        { name: "Business Process Optimization", desc: "Streamline operations through automation" },
       ],
       features: [
-        'Custom workflow automation',
-        'Email marketing integration',
-        'Lead nurturing sequences',
-        'CRM synchronization',
-        'Analytics event tracking',
-        'Zapier/Make integrations'
+        "Custom workflow automation",
+        "Email marketing integration",
+        "Lead nurturing sequences",
+        "CRM synchronization",
+        "Analytics event tracking",
+        "Zapier/Make integrations",
       ],
-      benefits: 'For businesses that want to save time and scale operations through automation.'
+      benefits: "For businesses that want to save time and scale operations through automation.",
     },
     {
-      id: 'seo-technical',
+      id: "seo-technical",
       icon: <Search className="w-12 h-12" />,
-      title: 'SEO & Technical Setup',
-      tagline: 'Get found online and perform better',
-      description: 'Technical SEO, on-page optimization, and performance tuning to help your website rank and convert.',
-      pricing: 'Included or from £199',
+      title: "SEO & Technical Setup",
+      tagline: "Get found online and perform better",
+      description:
+        "Technical SEO, on-page optimization, and performance tuning to help your website rank and convert.",
+      pricing: "Included or from £199",
       services: [
-        { name: 'Technical SEO Setup', desc: 'Site structure, indexing, and crawlability' },
-        { name: 'On-Page SEO', desc: 'Meta tags, headers, schema markup' },
-        { name: 'Performance Optimization', desc: 'Speed, loading times, Core Web Vitals' },
-        { name: 'SEO-Ready Architecture', desc: 'Built for search engines from day one' }
+        { name: "Technical SEO Setup", desc: "Site structure, indexing, and crawlability" },
+        { name: "On-Page SEO", desc: "Meta tags, headers, schema markup" },
+        { name: "Performance Optimization", desc: "Speed, loading times, Core Web Vitals" },
+        { name: "SEO-Ready Architecture", desc: "Built for search engines from day one" },
       ],
       features: [
-        'Technical SEO audit & setup',
-        'On-page optimization',
-        'Schema markup',
-        'Performance optimization',
-        'Google Search Console setup',
-        'Analytics & tracking'
+        "Technical SEO audit & setup",
+        "On-page optimization",
+        "Schema markup",
+        "Performance optimization",
+        "Google Search Console setup",
+        "Analytics & tracking",
       ],
-      benefits: 'Essential for businesses that want to be found online and convert more visitors.'
-    }
+      benefits:
+        "Essential for businesses that want to be found online and convert more visitors.",
+    },
   ];
 
   return (
     <div className="min-h-screen">
-      <SEOHead 
-        title="Web Design Services - AI Chatbots, Dashboards & SEO | NIXRIX"
-        description="Flexible web design services from £199. Choose from website design, AI chatbots, KPI dashboards, automation, and SEO. Custom solutions for UK businesses."
-        keywords="web design services, AI chatbot integration, KPI dashboard, Power BI, SEO services, website automation, UK web development"
+      <SEOHead
+        title="Web Design Services - AI Chatbots, E-commerce, Dashboards & SEO | NIXRIX"
+        description="Flexible web services from £199. Website design, AI chatbots, e-commerce (Shopify/WooCommerce) + ERP integration, KPI dashboards, automation, and technical SEO for UK businesses."
+        keywords="web design services, Shopify setup, WooCommerce development, ERP integration, AI chatbot integration, KPI dashboard, Power BI, SEO services, website automation, UK web development"
         schemaType="service"
       />
       <ChatbotWidget />
@@ -148,26 +183,26 @@ export function ServicesPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute top-0 right-0 w-96 h-96 bg-[#06B6D4]/10 rounded-full blur-3xl"
-            animate={{ 
+            animate={{
               scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3]
+              opacity: [0.3, 0.5, 0.3],
             }}
-            transition={{ 
-              duration: 8, 
+            transition={{
+              duration: 8,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div 
+          <motion.div
             className="text-center max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.span 
+            <motion.span
               className="text-[#06B6D4] font-semibold text-sm uppercase tracking-wider"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -175,23 +210,26 @@ export function ServicesPage() {
             >
               Our Services
             </motion.span>
-            <motion.h1 
+
+            <motion.h1
               className="text-5xl md:text-6xl font-bold text-white mt-4 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Flexible Solutions for Every Business
+              Flexible Services for Every Business
             </motion.h1>
-            <motion.p 
+
+            <motion.p
               className="text-xl text-gray-300 leading-relaxed mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              From simple websites to advanced platforms with AI, dashboards, and automation.
+              From simple websites to advanced platforms with AI, e-commerce, dashboards, and automation.
               Choose what you need, add features as you grow.
             </motion.p>
+
             <motion.div
               className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-6 py-4"
               initial={{ opacity: 0, y: 20 }}
@@ -231,23 +269,27 @@ export function ServicesPage() {
                               {group.icon}
                             </div>
                           </div>
+
                           <div className="flex-1 text-left">
                             <div className="flex items-start justify-between gap-4 mb-2">
                               <div>
                                 <h3 className="text-2xl font-bold text-gray-900 mb-1">{group.title}</h3>
                                 <p className="text-[#06B6D4] font-semibold">{group.tagline}</p>
                               </div>
+
                               <div className="text-right flex-shrink-0">
                                 <span className="inline-block bg-[#0D9488]/10 text-[#0D9488] px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">
                                   {group.pricing}
                                 </span>
                               </div>
                             </div>
+
                             <p className="text-gray-600 leading-relaxed">{group.description}</p>
                           </div>
                         </div>
                       </CardContent>
                     </AccordionTrigger>
+
                     <AccordionContent>
                       <div className="px-8 pb-8 pt-4 border-t">
                         <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -265,6 +307,7 @@ export function ServicesPage() {
                               ))}
                             </ul>
                           </div>
+
                           <div>
                             <h4 className="font-semibold text-gray-900 mb-4">Key Features:</h4>
                             <div className="grid grid-cols-1 gap-2">
@@ -293,9 +336,13 @@ export function ServicesPage() {
                               </Button>
                             </motion.div>
                           </Link>
+
                           <Link to="/demo">
                             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                              <Button variant="outline" className="border-[#0D9488] text-[#0D9488] hover:bg-[#0D9488]/5">
+                              <Button
+                                variant="outline"
+                                className="border-[#0D9488] text-[#0D9488] hover:bg-[#0D9488]/5"
+                              >
                                 View Demo
                               </Button>
                             </motion.div>
@@ -322,12 +369,10 @@ export function ServicesPage() {
                   <p>
                     <strong>Projects start from £199</strong> for simple one-page websites.
                   </p>
-                  <p>
-                    Final pricing depends on:
-                  </p>
+                  <p>Final pricing depends on:</p>
                   <ul className="list-disc list-inside space-y-2 ml-4">
                     <li>Number of pages and features</li>
-                    <li>Integration requirements (CRM, chatbot, dashboards)</li>
+                    <li>Integration requirements (CRM, chatbot, dashboards, ERP)</li>
                     <li>Customization and design complexity</li>
                     <li>Data sources and automation needs</li>
                   </ul>
@@ -346,16 +391,17 @@ export function ServicesPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D9488] to-[#06B6D4]"></div>
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+          <div
+            className="absolute inset-0"
+            style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "50px 50px" }}
+          ></div>
         </div>
-        
+
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal>
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Not Sure What You Need?
-            </h2>
+            <h2 className="text-4xl font-bold text-white mb-6">Not Sure What You Need?</h2>
             <p className="text-xl text-white/90 mb-8">
-              Book a free consultation and we'll recommend the best solution for your business.
+              Book a free consultation and we&apos;ll recommend the best service setup for your business.
             </p>
             <Link to="/contact">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
