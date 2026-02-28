@@ -37,7 +37,7 @@ export default function App() {
             <Route path="/cookies" element={<CookiePolicyPage />} />
 
             {/* New structure (temporary mapping to existing pages until we update pages) */}
-            <Route path="/solutions" element={<ServicesPage />} />
+            <Route path="/services" element={<ServicesPage />} />
             <Route path="/industries" element={<DemoPage />} />
             <Route path="/case-studies" element={<WorkPage />} />
             <Route path="/pricing" element={<ServicesPage />} />
