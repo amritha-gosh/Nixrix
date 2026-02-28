@@ -1,5 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, Minimize2, User, Phone, Mail, Sparkles, Loader2, CheckCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  MessageCircle,
+  X,
+  Send,
+  Minimize2,
+  User,
+  Phone,
+  Mail,
+  Sparkles,
+  Loader2,
+  CheckCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -31,9 +42,9 @@ type LeadPayload =
 export function ChatbotWidget() {
   const LEAD_ENDPOINT = (import.meta as any)?.env?.VITE_LEAD_ENDPOINT || "/api/lead";
 
-  // Put WhatsApp number in international format WITHOUT "+" (UK example: 447492712144)
+  // UK mobile example: 07492 712144 -> 447492712144 (NO +)
   const WHATSAPP_NUMBER = String((import.meta as any)?.env?.VITE_WHATSAPP_NUMBER || "447492712144").replace(/\D/g, "");
-  const SUPPORT_EMAIL = String((import.meta as any)?.env?.VITE_SUPPORT_EMAIL || "hello@nixrix.com");
+  const SUPPORT_EMAIL = (import.meta as any)?.env?.VITE_SUPPORT_EMAIL || "hello@nixrix.com";
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -100,30 +111,43 @@ export function ChatbotWidget() {
     const lower = userMessage.toLowerCase();
 
     if (lower.includes("call") || lower.includes("callback") || lower.includes("human") || lower.includes("live")) {
-      return "No problem — tap **Request Callback** below and share your details (WhatsApp or Email).";
+      return "No problem — tap **Request Callback** below and choose WhatsApp or Email.";
     }
 
     if (lower.includes("service") || lower.includes("offer") || lower.includes("build")) {
       return (
         "We build **full SME digital systems**, not just websites:\n\n" +
-        "✅ Conversion Website\n✅ Lead Capture + CRM-ready tracking\n✅ Automation workflows\n✅ KPI Dashboards & reporting\n✅ SEO foundations\n\n" +
+        "✅ Conversion Website (clear messaging + strong CTAs)\n" +
+        "✅ Lead Capture + CRM-ready tracking\n" +
+        "✅ Automation workflows (follow-ups, tasks, handovers)\n" +
+        "✅ KPI Dashboards & reporting\n" +
+        "✅ SEO foundations & visibility\n\n" +
         "What’s your business type and your #1 goal (more leads / better follow-up / better visibility)?"
       );
     }
 
     if (lower.includes("dashboard") || lower.includes("kpi") || lower.includes("analytics")) {
-      return "Yes — we embed dashboards and track leads, conversions, pipeline stages, and response times. Want a callback to discuss your workflow?";
+      return (
+        "Yes — we can embed dashboards and track KPIs like leads, conversions, sales, pipeline stages, and response time.\n\n" +
+        "If you want, request a callback and we’ll suggest the best setup."
+      );
     }
 
     if (lower.includes("crm") || lower.includes("automation") || lower.includes("workflow")) {
-      return "Absolutely — website lead capture → CRM pipeline, follow-ups, tasks/reminders, and onboarding workflows. Tap **Request Callback** when ready.";
+      return (
+        "Absolutely. We can set up website lead capture → CRM pipeline, follow-ups, tasks/reminders, and onboarding workflows.\n\n" +
+        "Tap **Request Callback** and we’ll review your current process."
+      );
     }
 
     if (lower.includes("contact") || lower.includes("email") || lower.includes("whatsapp")) {
       return `You can reach us at:\n\n📧 ${SUPPORT_EMAIL}\n💬 WhatsApp (use the WhatsApp button in the callback form)\n\nOr request a callback below.`;
     }
 
-    return "Tell me your business type and your goal — I’ll suggest the best setup.";
+    return (
+      "I can help with conversion websites, lead capture + CRM-ready setup, automation workflows, dashboards & reporting, and SEO foundations.\n\n" +
+      "What’s your business type and your #1 goal right now?"
+    );
   };
 
   const pushBotMessage = (text: string, delay = 850) => {
@@ -135,12 +159,11 @@ export function ChatbotWidget() {
   };
 
   const handleSend = () => {
-    if (!message.trim()) return;
     const userText = message.trim();
+    if (!userText) return;
 
     setMessages((prev) => [...prev, { type: "user", text: userText, timestamp: new Date() }]);
     setMessage("");
-
     pushBotMessage(getBotResponse(userText), 850 + Math.random() * 500);
   };
 
@@ -153,7 +176,10 @@ export function ChatbotWidget() {
     setMode("lead");
     setLeadStatus("idle");
     setLeadMsg("");
-    setMessages((prev) => [...prev, { type: "system", text: "🔔 Great — share your details below and we’ll get back to you.", timestamp: new Date() }]);
+    setMessages((prev) => [
+      ...prev,
+      { type: "system", text: "🔔 Great — share your details below and we’ll get back to you.", timestamp: new Date() },
+    ]);
   };
 
   const buildWhatsappLink = () => {
@@ -228,13 +254,19 @@ export function ChatbotWidget() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      if (!res.ok) {
+        const details = await res.text().catch(() => "");
+        throw new Error(details || `Request failed: ${res.status}`);
+      }
 
       setLeadStatus("success");
       setLiveChatRequested(true);
       setLeadMsg("Done! We’ve received your request. We’ll contact you shortly.");
 
-      setMessages((prev) => [...prev, { type: "system", text: "✅ Request received. Our team will contact you soon.", timestamp: new Date() }]);
+      setMessages((prev) => [
+        ...prev,
+        { type: "system", text: "✅ Request received. Our team will contact you soon.", timestamp: new Date() },
+      ]);
 
       setTimeout(() => {
         setMode("chat");
@@ -251,7 +283,12 @@ export function ChatbotWidget() {
   return (
     <>
       {/* Floating Button */}
-      <motion.div className="fixed bottom-6 right-6 z-50" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}>
+      <motion.div
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
+      >
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           className="bg-[#0D9488] text-white rounded-full p-4 shadow-2xl hover:bg-[#0c8479] transition-colors relative"
@@ -260,7 +297,11 @@ export function ChatbotWidget() {
           aria-label="Open chat"
         >
           {!isOpen && (
-            <motion.span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+            <motion.span
+              className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
           )}
           {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
         </motion.button>
@@ -350,7 +391,7 @@ export function ChatbotWidget() {
                     }`}
                   >
                     <p className="text-sm whitespace-pre-line leading-relaxed">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${msg.type === "bot" ? "text-gray-400" : msg.type === "system" ? "text-blue-400" : "text-white/70"}`}>
+                    <p className={`text-xs mt-1 ${msg.type === "user" ? "text-white/70" : "text-gray-400"}`}>
                       {msg.timestamp.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -379,6 +420,9 @@ export function ChatbotWidget() {
                       className="text-sm p-2 bg-white border border-gray-200 rounded-lg hover:border-[#0D9488] hover:bg-[#0D9488]/5 transition-all text-left"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.25 + index * 0.08 }}
                     >
                       {reply}
                     </motion.button>
@@ -388,34 +432,32 @@ export function ChatbotWidget() {
 
               {mode === "lead" && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div>
-                      <div className="font-semibold text-gray-900">Request a callback</div>
-                      <div className="text-xs text-gray-500 mt-1">Choose WhatsApp or Email — we’ll contact you soon.</div>
-                    </div>
-                  </div>
+                  <div className="font-semibold text-gray-900">Request a callback</div>
+                  <div className="text-xs text-gray-500 mt-1 mb-3">Choose WhatsApp or Email — we’ll contact you soon.</div>
 
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <button
                       type="button"
                       onClick={() => setLead((p) => ({ ...p, preferredContact: "whatsapp" }))}
                       className={`rounded-xl border px-3 py-2 text-sm font-semibold flex items-center justify-center gap-2 transition ${
-                        lead.preferredContact === "whatsapp" ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        lead.preferredContact === "whatsapp"
+                          ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]"
+                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <Phone className="w-4 h-4" />
-                      WhatsApp
+                      <Phone className="w-4 h-4" /> WhatsApp
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setLead((p) => ({ ...p, preferredContact: "email" }))}
                       className={`rounded-xl border px-3 py-2 text-sm font-semibold flex items-center justify-center gap-2 transition ${
-                        lead.preferredContact === "email" ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        lead.preferredContact === "email"
+                          ? "border-[#0D9488] bg-[#0D9488]/10 text-[#0D9488]"
+                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <Mail className="w-4 h-4" />
-                      Email
+                      <Mail className="w-4 h-4" /> Email
                     </button>
                   </div>
 
@@ -463,39 +505,38 @@ export function ChatbotWidget() {
                     <Button type="submit" className="w-full bg-gradient-to-r from-[#0D9488] to-[#06B6D4] text-white" disabled={leadStatus === "loading"}>
                       {leadStatus === "loading" ? (
                         <span className="inline-flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Sending…
+                          <Loader2 className="w-4 h-4 animate-spin" /> Sending…
                         </span>
                       ) : leadStatus === "success" ? (
                         <span className="inline-flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4" />
-                          Sent
+                          <CheckCircle className="w-4 h-4" /> Sent
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-2">
-                          Send Request
-                          <Send className="w-4 h-4" />
+                          Send Request <Send className="w-4 h-4" />
                         </span>
                       )}
                     </Button>
 
                     <div className="grid grid-cols-2 gap-2">
                       <a href={buildWhatsappLink()} target="_blank" rel="noreferrer" className="w-full">
-                        <Button variant="outline" className="w-full border-2">
-                          WhatsApp Us
-                        </Button>
+                        <Button variant="outline" className="w-full border-2">WhatsApp Us</Button>
                       </a>
                       <a href={buildMailtoLink()} className="w-full">
-                        <Button variant="outline" className="w-full border-2">
-                          Email Us
-                        </Button>
+                        <Button variant="outline" className="w-full border-2">Email Us</Button>
                       </a>
                     </div>
 
-                    {leadStatus === "error" && <div className="text-xs rounded-xl px-3 py-2 border border-red-200 bg-red-50 text-red-700">{leadMsg}</div>}
-                    {leadStatus === "success" && <div className="text-xs rounded-xl px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-800">{leadMsg}</div>}
+                    {leadStatus === "error" && (
+                      <div className="text-xs rounded-xl px-3 py-2 border border-red-200 bg-red-50 text-red-700">{leadMsg}</div>
+                    )}
+                    {leadStatus === "success" && (
+                      <div className="text-xs rounded-xl px-3 py-2 border border-emerald-200 bg-emerald-50 text-emerald-800">{leadMsg}</div>
+                    )}
 
-                    <p className="text-[11px] text-gray-500 leading-relaxed">By submitting, you agree to be contacted about your enquiry. We don’t sell your data.</p>
+                    <p className="text-[11px] text-gray-500 leading-relaxed">
+                      By submitting, you agree to be contacted about your enquiry. We don’t sell your data.
+                    </p>
                   </form>
                 </motion.div>
               )}
@@ -511,9 +552,7 @@ export function ChatbotWidget() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <User className="w-4 h-4" />
-                  Request Callback
-                  <Phone className="w-4 h-4" />
+                  <User className="w-4 h-4" /> Request Callback <Phone className="w-4 h-4" />
                 </motion.button>
               </div>
             )}
