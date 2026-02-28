@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Logo } from "@/app/components/Logo";
 
-type NavLink = { name: string; path: string; match?: "exact" | "startsWith" };
+type NavLink = { name: string; path: string; match?: "exact" | "startsWith"; aliases?: string[] };
 
 export function Navigation() {
   const location = useLocation();
@@ -17,33 +17,38 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll to top when route changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsMenuOpen(false);
   }, [location.pathname]);
 
   const navLinks: NavLink[] = [
     { name: "Home", path: "/", match: "exact" },
-    { name: "Solutions", path: "/solutions", match: "startsWith" },
-    { name: "Industries", path: "/industries", match: "startsWith" },
-    { name: "Case Studies", path: "/case-studies", match: "startsWith" },
-    { name: "How It Works", path: "/how-it-works", match: "exact" },
-    { name: "Pricing", path: "/pricing", match: "exact" },
+
+    // ✅ Services (new primary)
+    { name: "Services", path: "/services", match: "startsWith", aliases: ["/solutions"] },
+
+    // ✅ Case Studies / Work
+    { name: "Case Studies", path: "/case-studies", match: "startsWith", aliases: ["/work"] },
+
+    // ✅ Process page rename
+    { name: "How We Work", path: "/how-we-work", match: "exact", aliases: ["/how-it-works"] },
+
     { name: "Contact", path: "/contact", match: "exact" },
   ];
 
   const isActive = (link: NavLink) => {
     const p = location.pathname;
-    if (link.match === "exact") return p === link.path;
 
-    // startsWith match (also treat old routes as active during transition)
+    if (link.match === "exact") {
+      if (p === link.path) return true;
+      if (link.aliases?.some((a) => p === a)) return true;
+      return false;
+    }
+
+    // startsWith
     if (p.startsWith(link.path)) return true;
-
-    // Transitional mapping so old URLs still highlight correctly
-    if (link.path === "/solutions" && p.startsWith("/services")) return true;
-    if (link.path === "/case-studies" && p.startsWith("/work")) return true;
-    if (link.path === "/industries" && (p.startsWith("/demo") || p.startsWith("/industries"))) return true;
-
+    if (link.aliases?.some((a) => p.startsWith(a))) return true;
     return false;
   };
 
@@ -59,11 +64,7 @@ export function Navigation() {
       transition={{ duration: 0.3 }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          className={`flex justify-between items-center transition-all duration-300 ${
-            isScrolled ? "h-16" : "h-18"
-          }`}
-        >
+        <div className={`flex justify-between items-center transition-all duration-300 ${isScrolled ? "h-16" : "h-18"}`}>
           {/* Logo */}
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
