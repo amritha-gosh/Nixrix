@@ -1,5 +1,3 @@
-// api/lead.ts
-
 function escapeHtml(str: string) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -28,7 +26,7 @@ export default async function handler(req: Request) {
   const message = String(body?.message || "").trim();
   const source = String(body?.source || "").trim();
   const pageUrl = String(body?.pageUrl || "").trim();
-  const meta = body?.meta ? body.meta : null;
+  const meta = body?.meta ?? null;
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const LEAD_TO_EMAIL = process.env.LEAD_TO_EMAIL;
@@ -39,38 +37,47 @@ export default async function handler(req: Request) {
 
   if (!type) return new Response(JSON.stringify({ error: "Missing type" }), { status: 400 });
 
-  // Require at least one contact method for lead types
-  const needsContact = ["CONTACT_FORM", "LIVE_CHAT", "CHAT_LIVE_REQUEST", "CAREERS", "AUDIT", "WELCOME_CODE"].includes(type);
+  // Require at least one contact method for lead-like submissions
+  const needsContact = [
+    "CONTACT_FORM",
+    "LIVE_CHAT",
+    "CHAT_LIVE_REQUEST",
+    "CAREERS",
+    "AUDIT",
+    "WELCOME_CODE",
+  ].includes(type);
+
   if (needsContact && !email && !phone) {
     return new Response(JSON.stringify({ error: "Missing email or phone" }), { status: 400 });
   }
 
-  const id = email || phone || "unknown";
+  const contactId = email || phone || "unknown";
 
   const subjectMap: Record<string, string> = {
-    CONTACT_FORM: `New Website Enquiry — ${id}`,
-    LIVE_CHAT: `Live Chat Request — ${id}`,
-    CHAT_LIVE_REQUEST: `Live Chat Request — ${id}`,
-    CAREERS: `Careers Application — ${id}`,
-    AUDIT: `Audit Request — ${id}`,
-    WELCOME_CODE: `Audit Request — ${id}`, // compatibility
+    CONTACT_FORM: `New Website Enquiry — ${contactId}`,
+    LIVE_CHAT: `Live Chat Request — ${contactId}`,
+    CHAT_LIVE_REQUEST: `Live Chat Request — ${contactId}`,
+    CAREERS: `Careers Application — ${contactId}`,
+    AUDIT: `Audit Request — ${contactId}`,
+    WELCOME_CODE: `Audit Request — ${contactId}`,
   };
 
-  const subject = subjectMap[type] || `New Lead — ${id}`;
+  const subject = subjectMap[type] || `New Lead — ${contactId}`;
 
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.5">
       <h2>${escapeHtml(subject)}</h2>
-
       <p><strong>Type:</strong> ${escapeHtml(type)}</p>
       ${name ? `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
       ${email ? `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` : ""}
       ${phone ? `<p><strong>Phone/WhatsApp:</strong> ${escapeHtml(phone)}</p>` : ""}
       ${source ? `<p><strong>Source:</strong> ${escapeHtml(source)}</p>` : ""}
       ${pageUrl ? `<p><strong>Page:</strong> ${escapeHtml(pageUrl)}</p>` : ""}
-
-      ${message ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>` : ""}
-
+      ${
+        message
+          ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>`
+          : ""
+      }
       ${
         meta
           ? `<hr/><p style="margin:0 0 6px 0;"><strong>Meta:</strong></p>
@@ -82,7 +89,6 @@ export default async function handler(req: Request) {
     </div>
   `;
 
-  // Resend API uses `reply_to` (snake_case). :contentReference[oaicite:1]{index=1}
   const payload: any = {
     from: "NIXRIX <onboarding@resend.dev>",
     to: [LEAD_TO_EMAIL],
@@ -90,7 +96,8 @@ export default async function handler(req: Request) {
     html,
   };
 
-  if (email) payload.reply_to = email;
+  // Resend uses `replyTo` (camelCase)
+  if (email) payload.replyTo = email; // :contentReference[oaicite:1]{index=1}
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
