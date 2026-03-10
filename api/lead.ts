@@ -1,22 +1,30 @@
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 function escapeHtml(str: string) {
   return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 export default async function handler(req: Request) {
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405 });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+    });
   }
 
   let body: any = {};
   try {
     body = await req.json();
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+    });
   }
 
   const type = String(body?.type || "").trim();
@@ -32,15 +40,21 @@ export default async function handler(req: Request) {
   const LEAD_TO_EMAIL = process.env.LEAD_TO_EMAIL;
 
   if (!RESEND_API_KEY || !LEAD_TO_EMAIL) {
-    return new Response(JSON.stringify({ error: "Missing server env vars" }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Missing server env vars" }), {
+      status: 500,
+    });
   }
 
   if (!type) {
-    return new Response(JSON.stringify({ error: "Missing type" }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Missing type" }), {
+      status: 400,
+    });
   }
 
   if (!email) {
-    return new Response(JSON.stringify({ error: "Missing email" }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Missing email" }), {
+      status: 400,
+    });
   }
 
   const subjectMap: Record<string, string> = {
@@ -63,7 +77,11 @@ export default async function handler(req: Request) {
       ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ""}
       ${source ? `<p><strong>Source:</strong> ${escapeHtml(source)}</p>` : ""}
       ${pageUrl ? `<p><strong>Page:</strong> ${escapeHtml(pageUrl)}</p>` : ""}
-      ${message ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>` : ""}
+      ${
+        message
+          ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>`
+          : ""
+      }
       ${
         meta
           ? `<hr/><p><strong>Meta:</strong></p>
@@ -82,7 +100,9 @@ export default async function handler(req: Request) {
     html,
   };
 
-  if (email) payload.replyTo = email;
+  if (email) {
+    payload.replyTo = email;
+  }
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -95,8 +115,12 @@ export default async function handler(req: Request) {
 
   if (!response.ok) {
     const details = await response.text().catch(() => "");
-    return new Response(JSON.stringify({ error: "Email failed", details }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Email failed", details }), {
+      status: 500,
+    });
   }
 
-  return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  return new Response(JSON.stringify({ ok: true }), {
+    status: 200,
+  });
 }
