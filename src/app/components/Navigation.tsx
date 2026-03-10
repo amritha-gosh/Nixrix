@@ -17,30 +17,19 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll to top when route changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   const navLinks: NavLink[] = [
     { name: "Home", path: "/", match: "exact" },
-
-    // Renamed: Solutions -> Services
-    // Use /services as the real route. We'll still support /solutions as legacy.
     { name: "Services", path: "/services", match: "startsWith" },
-
-    // Keep Case Studies (good corporate page)
     { name: "Case Studies", path: "/case-studies", match: "startsWith" },
-
-    // Renamed: How It Works -> How We Work
     { name: "How We Work", path: "/how-we-work", match: "exact" },
-
-    // Keep Contact
     { name: "Contact", path: "/contact", match: "exact" },
   ];
 
@@ -48,11 +37,9 @@ export function Navigation() {
     const p = location.pathname;
 
     if (link.match === "exact") return p === link.path;
-
-    // startsWith match
     if (p.startsWith(link.path)) return true;
 
-    // Transitional mapping so old URLs still highlight correctly
+    // legacy support during transition
     if (link.path === "/services" && p.startsWith("/solutions")) return true;
     if (link.path === "/case-studies" && (p.startsWith("/work") || p.startsWith("/portfolio"))) return true;
     if (link.path === "/how-we-work" && p.startsWith("/how-it-works")) return true;
@@ -72,9 +59,17 @@ export function Navigation() {
       transition={{ duration: 0.3 }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex justify-between items-center transition-all duration-300 ${isScrolled ? "h-16" : "h-18"}`}>
+        <div
+          className={`flex justify-between items-center transition-all duration-300 ${
+            isScrolled ? "h-16" : "h-[4.5rem]"
+          }`}
+        >
           {/* Logo */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          <Link
+            to="/"
+            className="flex items-center shrink-0"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Logo />
             </motion.div>
@@ -105,11 +100,11 @@ export function Navigation() {
             ))}
 
             {/* Primary CTA */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="ml-4">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="ml-3 lg:ml-4">
               <Link
                 to="/contact"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="relative inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-[#0D9488] to-[#06B6D4] shadow-lg hover:shadow-2xl transition-all duration-200 overflow-hidden group"
+                className="relative inline-flex items-center justify-center px-5 lg:px-6 py-3 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-[#0D9488] to-[#06B6D4] shadow-lg hover:shadow-2xl transition-all duration-200 overflow-hidden group"
               >
                 <span className="relative z-10">Book Free SME Tech Audit</span>
                 <motion.div
