@@ -36,13 +36,38 @@ export function ContactPage() {
 
   const serviceOptions = useMemo(
     () => [
-      { value: "full-system", label: "Full SME Digital System (Website + Lead Flow + CRM Readiness + Automation + Dashboards)" },
-      { value: "website", label: "Conversion Website" },
-      { value: "crm-automation", label: "CRM + Automation Workflows" },
-      { value: "dashboards", label: "Dashboards & KPI Reporting" },
-      { value: "chatbot", label: "AI Chatbot + Lead Capture" },
-      { value: "seo", label: "SEO + Visibility" },
-      { value: "custom", label: "Custom / Not sure yet" },
+      {
+        value: "website",
+        label: "Business Website",
+      },
+      {
+        value: "ecommerce",
+        label: "E-commerce Website",
+      },
+      {
+        value: "erp-integration",
+        label: "ERP / Stock / Order Integration",
+      },
+      {
+        value: "crm-automation",
+        label: "CRM + Automation Workflows",
+      },
+      {
+        value: "dashboards",
+        label: "Dashboards & KPI Reporting",
+      },
+      {
+        value: "chatbot",
+        label: "AI Chatbot Integration",
+      },
+      {
+        value: "seo",
+        label: "SEO + Visibility",
+      },
+      {
+        value: "custom",
+        label: "Custom / Not sure yet",
+      },
     ],
     []
   );
@@ -53,6 +78,7 @@ export function ContactPage() {
       { value: "manufacturing", label: "Manufacturing" },
       { value: "local-services", label: "Local Services" },
       { value: "trading-distribution", label: "Trading / Distribution" },
+      { value: "restaurant-hospitality", label: "Restaurant / Hospitality" },
       { value: "other", label: "Other" },
     ],
     []
@@ -63,7 +89,7 @@ export function ContactPage() {
     email: "",
     phone: "",
     businessType: "",
-    serviceInterest: "full-system",
+    serviceInterest: "website",
     message: "",
   });
 
@@ -73,7 +99,9 @@ export function ContactPage() {
 
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
@@ -86,16 +114,19 @@ export function ContactPage() {
       setStatusMsg("Please enter your name.");
       return;
     }
+
     if (!isValidEmail(formData.email)) {
       setStatus("error");
       setStatusMsg("Please enter a valid email address.");
       return;
     }
+
     if (!formData.businessType) {
       setStatus("error");
       setStatusMsg("Please select your business type.");
       return;
     }
+
     if (!formData.message.trim()) {
       setStatus("error");
       setStatusMsg("Please tell us a bit about what you need.");
@@ -119,14 +150,24 @@ export function ContactPage() {
       },
     };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res = await fetch(LEAD_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      clearTimeout(timeout);
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.details || data?.error || `Request failed: ${res.status}`);
+      }
 
       setStatus("success");
       setStatusMsg("Thanks! We’ve received your message. We’ll get back to you shortly.");
@@ -139,22 +180,27 @@ export function ContactPage() {
           email: "",
           phone: "",
           businessType: "",
-          serviceInterest: "full-system",
+          serviceInterest: "website",
           message: "",
         });
       }, 2200);
-    } catch {
+    } catch (err: any) {
+      clearTimeout(timeout);
       setStatus("error");
-      setStatusMsg("Couldn’t send right now. Please try again, or email us at hello@nixrix.com.");
+      setStatusMsg(
+        err?.name === "AbortError"
+          ? "The request took too long. Please try again in a moment."
+          : err?.message || "Couldn’t send right now. Please try again, or email us at hello@nixrix.com."
+      );
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Contact NIXRIX – Free SME Tech Audit | Websites + Automation + Dashboards"
-        description="Book a complimentary SME Tech Audit with NIXRIX. We build conversion websites, CRM-ready lead flows, automation workflows, and KPI dashboards."
-        keywords="SME tech audit, website and automation, lead capture, dashboards, contact Nixrix, Leeds digital solutions"
+        title="Contact NIXRIX | Business Websites, Integrations & Insights"
+        description="Contact NIXRIX to discuss business websites, e-commerce, ERP integrations, dashboards, automation, and SEO."
+        keywords="contact NIXRIX, business website enquiry, ecommerce website, ERP integration, KPI dashboards, SEO, Leeds digital solutions"
       />
 
       <ChatbotWidget />
@@ -180,7 +226,9 @@ export function ContactPage() {
           >
             <div className="inline-flex items-center gap-2 mb-6 px-5 py-2.5 bg-[#06B6D4]/10 backdrop-blur-sm rounded-full border border-[#06B6D4]/30">
               <Sparkles className="w-4 h-4 text-[#06B6D4]" />
-              <span className="text-[#06B6D4] text-sm font-semibold">Complimentary SME Tech Audit</span>
+              <span className="text-[#06B6D4] text-sm font-semibold">
+                Websites, Integrations & Business Insights
+              </span>
             </div>
 
             <motion.h1
@@ -189,7 +237,7 @@ export function ContactPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
             >
-              Let’s Build a System That Brings Leads
+              Tell Us About Your Project
             </motion.h1>
 
             <motion.p
@@ -198,7 +246,7 @@ export function ContactPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              Tell us what you need — we’ll reply with clear next steps and a structured plan.
+              Share your requirements and we’ll reply with clear next steps and the right approach for your business.
             </motion.p>
           </motion.div>
         </div>
@@ -213,9 +261,11 @@ export function ContactPage() {
               <ScrollReveal>
                 <Card className="border-2 shadow-xl">
                   <CardContent className="p-6 md:p-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Request Your Audit</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                      Start Your Enquiry
+                    </h2>
                     <p className="text-gray-600 mb-8">
-                      Share a few details — we’ll reply with a clear plan. No jargon, no pressure.
+                      Tell us what you need and we’ll come back with a clear response. No jargon, no pressure.
                     </p>
 
                     {status === "success" ? (
@@ -224,11 +274,19 @@ export function ContactPage() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                       >
-                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 200 }}
+                        >
                           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
                         </motion.div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Request received</h3>
-                        <p className="text-gray-600">{statusMsg || "We’ll get back to you shortly."}</p>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                          Message received
+                        </h3>
+                        <p className="text-gray-600">
+                          {statusMsg || "We’ll get back to you shortly."}
+                        </p>
                       </motion.div>
                     ) : (
                       <form onSubmit={handleSubmit} className="space-y-6">
@@ -253,7 +311,9 @@ export function ContactPage() {
                               onFocus={() => setFocusedField("name")}
                               onBlur={() => setFocusedField(null)}
                               placeholder="John Smith"
-                              className={`transition-all ${focusedField === "name" ? "ring-2 ring-[#0D9488]" : ""}`}
+                              className={`transition-all ${
+                                focusedField === "name" ? "ring-2 ring-[#0D9488]" : ""
+                              }`}
                             />
                           </motion.div>
 
@@ -271,7 +331,9 @@ export function ContactPage() {
                               onFocus={() => setFocusedField("email")}
                               onBlur={() => setFocusedField(null)}
                               placeholder="you@business.com"
-                              className={`transition-all ${focusedField === "email" ? "ring-2 ring-[#0D9488]" : ""}`}
+                              className={`transition-all ${
+                                focusedField === "email" ? "ring-2 ring-[#0D9488]" : ""
+                              }`}
                             />
                           </motion.div>
                         </div>
@@ -290,7 +352,9 @@ export function ContactPage() {
                               onFocus={() => setFocusedField("phone")}
                               onBlur={() => setFocusedField(null)}
                               placeholder="07xxx xxxxxx"
-                              className={`transition-all ${focusedField === "phone" ? "ring-2 ring-[#0D9488]" : ""}`}
+                              className={`transition-all ${
+                                focusedField === "phone" ? "ring-2 ring-[#0D9488]" : ""
+                              }`}
                             />
                           </motion.div>
 
@@ -356,9 +420,11 @@ export function ContactPage() {
                             onChange={handleChange}
                             onFocus={() => setFocusedField("message")}
                             onBlur={() => setFocusedField(null)}
-                            placeholder="Example: We want more enquiries, better follow-up, and reporting to track conversions…"
+                            placeholder="Example: We need a stronger website, better lead capture, e-commerce capability, or integrations to improve operations and reporting."
                             rows={6}
-                            className={`transition-all ${focusedField === "message" ? "ring-2 ring-[#0D9488]" : ""}`}
+                            className={`transition-all ${
+                              focusedField === "message" ? "ring-2 ring-[#0D9488]" : ""
+                            }`}
                           />
                         </motion.div>
 
@@ -377,7 +443,7 @@ export function ContactPage() {
                             ) : (
                               <>
                                 <Send className="mr-2 w-5 h-5" />
-                                Send Request
+                                Send Enquiry
                               </>
                             )}
                           </Button>
@@ -404,7 +470,9 @@ export function ContactPage() {
               <ScrollReveal delay={0.2}>
                 <Card className="border-2 shadow-lg">
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">
+                      Contact Information
+                    </h3>
                     <div className="space-y-5">
                       <motion.div className="flex items-start group" whileHover={{ x: 5 }}>
                         <div className="flex-shrink-0 w-10 h-10 bg-[#0D9488]/10 rounded-lg flex items-center justify-center mr-4">
@@ -464,19 +532,19 @@ export function ContactPage() {
                     <ol className="space-y-3 text-sm text-gray-700">
                       <li className="flex items-start">
                         <span className="font-bold text-[#0D9488] mr-3 mt-0.5">1.</span>
-                        <span>We review your request and reply with next steps</span>
+                        <span>We review your enquiry and reply with next steps</span>
                       </li>
                       <li className="flex items-start">
                         <span className="font-bold text-[#0D9488] mr-3 mt-0.5">2.</span>
-                        <span>We schedule a quick call to understand your workflow and goals</span>
+                        <span>We clarify your requirements and recommend the right structure</span>
                       </li>
                       <li className="flex items-start">
                         <span className="font-bold text-[#0D9488] mr-3 mt-0.5">3.</span>
-                        <span>You receive a structured plan and proposal</span>
+                        <span>You receive a clear proposal or direction</span>
                       </li>
                       <li className="flex items-start">
                         <span className="font-bold text-[#0D9488] mr-3 mt-0.5">4.</span>
-                        <span>If it’s a fit, we build and launch your system</span>
+                        <span>If it’s a fit, we move into planning and delivery</span>
                       </li>
                     </ol>
                   </CardContent>
@@ -491,26 +559,28 @@ export function ContactPage() {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Common Questions</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Common Questions
+            </h2>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
                 q: "How quickly can we get started?",
-                a: "Once we understand your goals and scope, we’ll share a clear plan and timeline.",
+                a: "Once we understand your goals and scope, we’ll share the right next steps and timeline.",
               },
               {
                 q: "What if I already have a website?",
-                a: "We can improve conversions, add lead tracking, introduce automation, and plug in dashboards without rebuilding everything.",
+                a: "We can improve it, redesign it, or integrate tools like dashboards, chatbots, e-commerce functions, and workflows without always rebuilding from scratch.",
               },
               {
                 q: "Do I need technical knowledge?",
-                a: "No. We keep everything simple and explain it in plain English with clear steps.",
+                a: "No. We keep everything simple and explain things clearly in business terms.",
               },
               {
-                q: "Can you connect CRM and workflows later?",
-                a: "Yes. We can build the foundations first and expand into CRM, automation, dashboards, and integrations as you grow.",
+                q: "Can you add integrations later?",
+                a: "Yes. We can start with the website foundation and expand with CRM, automation, ERP, dashboards, or e-commerce features over time.",
               },
             ].map((faq, index) => (
               <ScrollReveal key={index} delay={index * 0.08}>
