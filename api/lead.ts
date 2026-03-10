@@ -26,7 +26,7 @@ export default async function handler(req: Request) {
   const message = String(body?.message || "").trim();
   const source = String(body?.source || "").trim();
   const pageUrl = String(body?.pageUrl || "").trim();
-  const meta = body?.meta ?? null;
+  const meta = body?.meta ? body.meta : null;
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const LEAD_TO_EMAIL = process.env.LEAD_TO_EMAIL;
@@ -35,52 +35,38 @@ export default async function handler(req: Request) {
     return new Response(JSON.stringify({ error: "Missing server env vars" }), { status: 500 });
   }
 
-  if (!type) return new Response(JSON.stringify({ error: "Missing type" }), { status: 400 });
-
-  // Require at least one contact method for lead-like submissions
-  const needsContact = [
-    "CONTACT_FORM",
-    "LIVE_CHAT",
-    "CHAT_LIVE_REQUEST",
-    "CAREERS",
-    "AUDIT",
-    "WELCOME_CODE",
-  ].includes(type);
-
-  if (needsContact && !email && !phone) {
-    return new Response(JSON.stringify({ error: "Missing email or phone" }), { status: 400 });
+  if (!type) {
+    return new Response(JSON.stringify({ error: "Missing type" }), { status: 400 });
   }
 
-  const contactId = email || phone || "unknown";
+  if (!email) {
+    return new Response(JSON.stringify({ error: "Missing email" }), { status: 400 });
+  }
 
   const subjectMap: Record<string, string> = {
-    CONTACT_FORM: `New Website Enquiry — ${contactId}`,
-    LIVE_CHAT: `Live Chat Request — ${contactId}`,
-    CHAT_LIVE_REQUEST: `Live Chat Request — ${contactId}`,
-    CAREERS: `Careers Application — ${contactId}`,
-    AUDIT: `Audit Request — ${contactId}`,
-    WELCOME_CODE: `Audit Request — ${contactId}`,
+    CONTACT_FORM: `New Website Enquiry — ${email}`,
+    LIVE_CHAT: `Live Chat Request — ${email}`,
+    CHAT_LIVE_REQUEST: `Live Chat Request — ${email}`,
+    CAREERS: `Careers Application — ${email}`,
+    AUDIT: `Audit Request — ${email}`,
+    WELCOME_CODE: `Audit Request — ${email}`,
   };
 
-  const subject = subjectMap[type] || `New Lead — ${contactId}`;
+  const subject = subjectMap[type] || `New Lead — ${email}`;
 
   const html = `
-    <div style="font-family:Arial,sans-serif;line-height:1.5">
+    <div style="font-family:Arial,sans-serif;line-height:1.6">
       <h2>${escapeHtml(subject)}</h2>
       <p><strong>Type:</strong> ${escapeHtml(type)}</p>
       ${name ? `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
       ${email ? `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` : ""}
-      ${phone ? `<p><strong>Phone/WhatsApp:</strong> ${escapeHtml(phone)}</p>` : ""}
+      ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ""}
       ${source ? `<p><strong>Source:</strong> ${escapeHtml(source)}</p>` : ""}
       ${pageUrl ? `<p><strong>Page:</strong> ${escapeHtml(pageUrl)}</p>` : ""}
-      ${
-        message
-          ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>`
-          : ""
-      }
+      ${message ? `<p><strong>Message:</strong><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>` : ""}
       ${
         meta
-          ? `<hr/><p style="margin:0 0 6px 0;"><strong>Meta:</strong></p>
+          ? `<hr/><p><strong>Meta:</strong></p>
              <pre style="background:#f6f6f6;padding:12px;border-radius:10px;overflow:auto">${escapeHtml(
                JSON.stringify(meta, null, 2)
              )}</pre>`
@@ -96,8 +82,7 @@ export default async function handler(req: Request) {
     html,
   };
 
-  // Resend uses `replyTo` (camelCase)
-  if (email) payload.replyTo = email; // :contentReference[oaicite:1]{index=1}
+  if (email) payload.replyTo = email;
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
