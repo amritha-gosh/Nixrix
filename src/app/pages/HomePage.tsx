@@ -401,7 +401,7 @@ export function HomePage() {
             </motion.div>
 
             <motion.div
-              className="mt-10 grid grid-cols-2 gap-4 border-t border-white/10 pt-8 md:grid-cols-4"
+              className="mt-10 grid grid-cols-2 gap-4 border-t border-white/10 pt-8 xl:grid-cols-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.9 }}
@@ -409,16 +409,16 @@ export function HomePage() {
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="group rounded-2xl border border-white/8 bg-white/[0.04] p-4 text-center backdrop-blur-sm"
+                  className="group min-h-[132px] rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-5 text-center backdrop-blur-sm"
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.95 + index * 0.08 }}
                   whileHover={{ scale: 1.04, y: -4 }}
                 >
-                  <div className="mb-2 text-2xl font-bold text-white md:text-3xl">
+                  <div className="mb-3 text-[2rem] font-bold leading-none text-white">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-slate-400 transition-colors group-hover:text-[#67E8F9]">
+                  <div className="mx-auto max-w-[120px] text-sm leading-6 text-slate-400 transition-colors group-hover:text-[#67E8F9]">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -640,7 +640,7 @@ export function HomePage() {
                   whileHover={{ y: -8 }}
                   transition={{ type: "spring", stiffness: 260 }}
                 >
-                  <Card className="group h-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] shadow-[0_14px_35px_rgba(0,0,0,0.22)] backdrop-blur-sm transition hover:border-[#2DD4BF]/35 hover:bg-white/[0.07] hover:shadow-[0_20px_55px_rgba(6,182,212,0.14)]">
+                  <Card className="group h-full overflow-hidden rounded-3xl border border-white/10 bg-slate-50 shadow-[0_14px_35px_rgba(0,0,0,0.18)] transition hover:border-[#2DD4BF]/35 hover:shadow-[0_20px_55px_rgba(6,182,212,0.14)]">
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <motion.img
                         src={service.image}
@@ -649,20 +649,20 @@ export function HomePage() {
                         whileHover={{ scale: 1.08 }}
                         transition={{ duration: 0.45 }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#07121A] via-[#07121A]/25 to-transparent" />
-                      <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 via-slate-900/10 to-transparent" />
+                      <div className="absolute bottom-4 left-4 rounded-full border border-white/30 bg-black/35 px-3 py-1 text-xs font-medium text-white backdrop-blur">
                         Flexible service
                       </div>
                     </div>
 
                     <CardContent className="p-6">
-                      <h3 className="mb-3 text-xl font-bold text-white">{service.title}</h3>
-                      <p className="mb-4 text-sm leading-relaxed text-slate-300">{service.description}</p>
+                      <h3 className="mb-3 text-xl font-bold text-slate-900">{service.title}</h3>
+                      <p className="mb-4 text-sm leading-relaxed text-slate-600">{service.description}</p>
 
                       <ul className="mb-6 space-y-2">
                         {service.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start text-sm text-slate-200">
-                            <Check className="mr-2 mt-0.5 h-4 w-4 shrink-0 text-[#2DD4BF]" />
+                          <li key={idx} className="flex items-start text-sm text-slate-700">
+                            <Check className="mr-2 mt-0.5 h-4 w-4 shrink-0 text-[#0D9488]" />
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -670,7 +670,7 @@ export function HomePage() {
 
                       <Link
                         to="/services"
-                        className="inline-flex items-center text-sm font-semibold text-[#67E8F9] transition hover:text-[#2DD4BF]"
+                        className="inline-flex items-center text-sm font-semibold text-[#0D9488] transition hover:text-[#06B6D4]"
                       >
                         Learn More
                         <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -782,35 +782,36 @@ export function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden py-24">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D9488] via-[#0c8479] to-[#06B6D4]" />
-        <div className="absolute inset-0 opacity-[0.09]">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-              backgroundSize: "50px 50px",
-            }}
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#07121A_0%,#0B1C25_55%,#0F172A_100%)] py-24">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-[0.08]">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+                backgroundSize: "48px 48px",
+              }}
+            />
+          </div>
+
+          <motion.div
+            className="absolute left-10 top-10 h-48 w-48 rounded-full bg-[#06B6D4]/12 blur-3xl"
+            animate={{ x: [0, 15, 0], y: [0, 12, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-10 right-10 h-56 w-56 rounded-full bg-[#0D9488]/12 blur-3xl"
+            animate={{ x: [0, -15, 0], y: [0, -12, 0] }}
+            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
-
-        <motion.div
-          className="absolute left-10 top-10 h-48 w-48 rounded-full bg-white/10 blur-3xl"
-          animate={{ x: [0, 15, 0], y: [0, 12, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-10 h-56 w-56 rounded-full bg-cyan-200/10 blur-3xl"
-          animate={{ x: [0, -15, 0], y: [0, -12, 0] }}
-          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-        />
 
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <ScrollReveal>
             <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">
               Ready to Build Something That Actually Works?
             </h2>
-            <p className="mx-auto mb-10 max-w-2xl text-xl text-white/90">
+            <p className="mx-auto mb-10 max-w-2xl text-xl text-slate-300">
               Let’s map your goals, fix the gaps, and build a system that converts—then scales.
             </p>
 
@@ -819,7 +820,7 @@ export function HomePage() {
                 <Button
                   size="lg"
                   onClick={() => setAuditOpen(true)}
-                  className="bg-white px-12 py-7 text-lg text-[#0D9488] shadow-2xl hover:bg-slate-100"
+                  className="bg-gradient-to-r from-[#0D9488] to-[#06B6D4] px-12 py-7 text-lg text-white shadow-[0_16px_40px_rgba(6,182,212,0.22)] hover:shadow-[0_20px_55px_rgba(6,182,212,0.32)]"
                 >
                   Request Complimentary Audit
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -831,7 +832,7 @@ export function HomePage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-white/70 bg-transparent px-12 py-7 text-lg text-white hover:bg-white hover:text-slate-900"
+                    className="border-2 border-white/30 bg-white/5 px-12 py-7 text-lg text-white backdrop-blur-sm hover:bg-white hover:text-slate-900"
                   >
                     Contact Us
                   </Button>
