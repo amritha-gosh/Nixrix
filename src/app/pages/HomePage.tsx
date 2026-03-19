@@ -375,70 +375,144 @@ export function HomePage() {
             initial={{ opacity: 0, x: 28 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="mx-auto w-full max-w-xl"
+            className="mx-auto w-full max-w-2xl"
           >
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl">
-              <div className="rounded-2xl border border-white/10 bg-gray-950/80 p-4">
-                <div className="mb-4 flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-red-400" />
-                  <span className="h-3 w-3 rounded-full bg-yellow-400" />
-                  <span className="h-3 w-3 rounded-full bg-green-400" />
-                </div>
+            <div className="relative">
+              <div className="absolute -left-6 top-10 h-32 w-32 rounded-full bg-cyan-500/10 blur-3xl" />
+              <div className="absolute -bottom-8 right-4 h-40 w-40 rounded-full bg-teal-500/10 blur-3xl" />
 
-                <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                    <div className="mb-4 h-4 w-40 rounded bg-white/10" />
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-xl bg-gradient-to-br from-cyan-500/20 to-transparent p-4">
-                        <BarChart3 className="mb-4 h-6 w-6 text-cyan-400" />
-                        <div className="h-3 w-16 rounded bg-white/15" />
-                        <div className="mt-2 h-6 w-20 rounded bg-white/10" />
-                      </div>
-                      <div className="rounded-xl bg-gradient-to-br from-teal-500/20 to-transparent p-4">
-                        <Bot className="mb-4 h-6 w-6 text-teal-400" />
-                        <div className="h-3 w-16 rounded bg-white/15" />
-                        <div className="mt-2 h-6 w-20 rounded bg-white/10" />
-                      </div>
+              <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl">
+                <div className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0B1220]/95">
+                  {/* top browser bar */}
+                  <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="h-3 w-3 rounded-full bg-red-400" />
+                      <span className="h-3 w-3 rounded-full bg-yellow-400" />
+                      <span className="h-3 w-3 rounded-full bg-green-400" />
                     </div>
-
-                    <div className="mt-4 rounded-xl bg-white/[0.03] p-4">
-                      <div className="mb-3 h-3 w-28 rounded bg-white/15" />
-                      <div className="space-y-2">
-                        <div className="h-2.5 w-full rounded bg-white/10" />
-                        <div className="h-2.5 w-4/5 rounded bg-white/10" />
-                        <div className="h-2.5 w-3/5 rounded bg-white/10" />
-                      </div>
+                    <div className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-white/50 sm:block">
+                      nixrix business system preview
                     </div>
                   </div>
 
-                  <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                    <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-                      <div className="flex items-center gap-2 text-sm font-medium text-white">
-                        <Workflow className="h-4 w-4 text-cyan-400" />
-                        Workflow-ready
+                  <div className="grid gap-4 p-4 lg:grid-cols-[1.35fr_0.85fr]">
+                    {/* left main preview */}
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                        <div className="mb-4 flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-white/90">Business Overview</div>
+                            <div className="text-xs text-white/50">Performance snapshot</div>
+                          </div>
+                          <div className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">
+                            Live
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 p-4">
+                            <div className="text-xs text-white/50">Leads</div>
+                            <div className="mt-2 text-2xl font-semibold text-white">128</div>
+                            <div className="mt-1 text-xs text-cyan-300">+18% this month</div>
+                          </div>
+
+                          <div className="rounded-xl bg-gradient-to-br from-teal-500/20 to-teal-500/5 p-4">
+                            <div className="text-xs text-white/50">Enquiries</div>
+                            <div className="mt-2 text-2xl font-semibold text-white">46</div>
+                            <div className="mt-1 text-xs text-teal-300">Steady growth</div>
+                          </div>
+
+                          <div className="rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] p-4">
+                            <div className="text-xs text-white/50">Tasks</div>
+                            <div className="mt-2 text-2xl font-semibold text-white">12</div>
+                            <div className="mt-1 text-xs text-white/60">In workflow</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                        <div className="mb-4 flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-white/90">Reporting & Insights</div>
+                            <div className="text-xs text-white/50">Visibility across key metrics</div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                              <span>Lead conversion</span>
+                              <span>72%</span>
+                            </div>
+                            <div className="h-2 rounded-full bg-white/10">
+                              <div className="h-2 w-[72%] rounded-full bg-gradient-to-r from-cyan-400 to-teal-400" />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                              <span>Response efficiency</span>
+                              <span>84%</span>
+                            </div>
+                            <div className="h-2 rounded-full bg-white/10">
+                              <div className="h-2 w-[84%] rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                              <span>Workflow completion</span>
+                              <span>63%</span>
+                            </div>
+                            <div className="h-2 rounded-full bg-white/10">
+                              <div className="h-2 w-[63%] rounded-full bg-gradient-to-r from-cyan-400 to-teal-400" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-teal-400/20 bg-teal-400/10 p-4">
-                      <div className="flex items-center gap-2 text-sm font-medium text-white">
-                        <BarChart3 className="h-4 w-4 text-teal-400" />
-                        Insight-driven
+                    {/* right side stack */}
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-cyan-400/15 bg-cyan-400/10 p-4">
+                        <div className="text-sm font-medium text-white">CRM-ready lead capture</div>
+                        <div className="mt-1 text-xs leading-5 text-white/70">
+                          Structured enquiry flow designed for handoff and follow-up.
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-                      <div className="flex items-center gap-2 text-sm font-medium text-white">
-                        <Bot className="h-4 w-4 text-white/80" />
-                        Lead-focused
+                      <div className="rounded-2xl border border-teal-400/15 bg-teal-400/10 p-4">
+                        <div className="text-sm font-medium text-white">FAQ chatbot support</div>
+                        <div className="mt-1 text-xs leading-5 text-white/70">
+                          Answer common questions and guide visitors without friction.
+                        </div>
                       </div>
-                    </div>
 
-                    <Button
-                      onClick={() => setAuditOpen(true)}
-                      className="h-11 w-full rounded-xl bg-white text-gray-900 hover:bg-gray-100"
-                    >
-                      Book Free Audit
-                    </Button>
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                        <div className="mb-3 text-sm font-medium text-white">System status</div>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-xs text-white/70">
+                            <span>Website structure</span>
+                            <span className="text-emerald-300">Ready</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-white/70">
+                            <span>Dashboard layer</span>
+                            <span className="text-emerald-300">Connected</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-white/70">
+                            <span>Automation flow</span>
+                            <span className="text-cyan-300">Active</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => setAuditOpen(true)}
+                        className="h-12 w-full rounded-xl bg-white text-gray-900 hover:bg-gray-100"
+                      >
+                        Book Free Audit
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
