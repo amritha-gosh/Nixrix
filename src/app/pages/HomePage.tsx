@@ -7,11 +7,6 @@ import {
   X,
   Loader2,
   CheckCircle,
-  Globe,
-  Bot,
-  BarChart3,
-  Workflow,
-  Briefcase,
   Check,
 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
@@ -238,19 +233,22 @@ export function HomePage() {
       title: "Results-driven",
       description:
         "We focus on websites and systems that support visibility, conversion, and practical business outcomes.",
-      icon: BarChart3,
+      image:
+        "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop",
     },
     {
       title: "Strategy first",
       description:
         "We design around your business goals, not just visuals, so the final product actually serves a purpose.",
-      icon: Briefcase,
+      image:
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=800&fit=crop",
     },
     {
       title: "Fast execution",
       description:
         "We aim to keep projects clear, efficient, and structured so you can move forward without unnecessary delays.",
-      icon: Workflow,
+      image:
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=800&fit=crop",
     },
   ];
 
@@ -286,30 +284,32 @@ export function HomePage() {
       <AuditModal open={auditOpen} onClose={() => setAuditOpen(false)} />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+      <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,#0f172a_0%,#0b1220_35%,#081018_100%)]">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(13,148,136,0.18),transparent_28%)]" />
-
           <motion.div
-            className="absolute -top-16 left-[-80px] h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"
-            animate={{ x: [0, 40, 0], y: [0, 30, 0] }}
+            className="absolute -top-20 left-[-60px] h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl"
+            animate={{ x: [0, 30, 0], y: [0, 20, 0], scale: [1, 1.08, 1] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-[-60px] right-[-40px] h-80 w-80 rounded-full bg-teal-500/15 blur-3xl"
+            animate={{ x: [0, -25, 0], y: [0, -18, 0], scale: [1.06, 1, 1.06] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
-
           <motion.div
-            className="absolute bottom-[-60px] right-[-40px] h-80 w-80 rounded-full bg-teal-500/10 blur-3xl"
-            animate={{ x: [0, -30, 0], y: [0, -20, 0] }}
-            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute left-1/2 top-1/3 h-52 w-52 -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl"
+            animate={{ y: [0, 25, 0], opacity: [0.18, 0.3, 0.18] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
-
           <div
-            className="absolute inset-0 opacity-[0.06]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
               backgroundImage:
                 "radial-gradient(circle, rgba(255,255,255,1) 1px, transparent 1px)",
-              backgroundSize: "42px 42px",
+              backgroundSize: "40px 40px",
             }}
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/40 via-transparent to-[#020617]/20" />
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 py-24 sm:px-6 md:py-28 lg:grid-cols-2 lg:px-8 lg:py-32">
@@ -318,9 +318,9 @@ export function HomePage() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100 backdrop-blur"
             >
-              <Sparkles className="h-4 w-4 text-cyan-400" />
+              <Sparkles className="h-4 w-4 text-cyan-300" />
               UK-based digital systems for growing businesses
             </motion.div>
 
@@ -331,7 +331,7 @@ export function HomePage() {
               className="max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl"
             >
               Websites Built for{" "}
-              <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
                 Real Business Results
               </span>
             </motion.h1>
@@ -340,7 +340,7 @@ export function HomePage() {
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.2 }}
-              className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-300"
+              className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300"
             >
               NIXRIX builds business websites with dashboards, automation, chatbot functionality,
               and system-ready foundations that help SMEs improve visibility, conversion, and operations.
@@ -354,7 +354,7 @@ export function HomePage() {
             >
               <Button
                 onClick={() => setAuditOpen(true)}
-                className="h-14 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-500 px-8 text-base text-white shadow-lg hover:scale-[1.02] hover:shadow-2xl"
+                className="h-14 rounded-xl bg-gradient-to-r from-[#0D9488] via-[#0ea5a3] to-[#06B6D4] px-8 text-base text-white shadow-[0_12px_40px_rgba(6,182,212,0.25)] transition hover:scale-[1.02] hover:shadow-[0_18px_50px_rgba(6,182,212,0.35)]"
               >
                 Book Free Audit
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -363,7 +363,7 @@ export function HomePage() {
               <Link to="/work">
                 <Button
                   variant="outline"
-                  className="h-14 rounded-xl border-white/30 bg-transparent px-8 text-base text-white hover:bg-white hover:text-gray-900"
+                  className="h-14 rounded-xl border-cyan-300/30 bg-white/5 px-8 text-base text-white backdrop-blur hover:bg-white hover:text-slate-900"
                 >
                   View Work
                 </Button>
@@ -375,140 +375,161 @@ export function HomePage() {
             initial={{ opacity: 0, x: 28 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="mx-auto w-full max-w-2xl"
+            className="mx-auto w-full max-w-xl"
           >
             <div className="relative">
-              <div className="absolute -left-6 top-10 h-32 w-32 rounded-full bg-cyan-500/10 blur-3xl" />
-              <div className="absolute -bottom-8 right-4 h-40 w-40 rounded-full bg-teal-500/10 blur-3xl" />
+              <motion.div
+                className="absolute -left-4 top-8 h-24 w-24 rounded-full bg-cyan-400/20 blur-2xl"
+                animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.45, 0.25] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute -bottom-4 right-2 h-28 w-28 rounded-full bg-teal-400/20 blur-2xl"
+                animate={{ scale: [1.1, 1, 1.1], opacity: [0.35, 0.2, 0.35] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              />
 
-              <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl">
-                <div className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0B1220]/95">
-                  {/* top browser bar */}
-                  <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+              <div className="relative overflow-hidden rounded-[28px] border border-cyan-300/15 bg-white/10 p-3 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+                <div className="overflow-hidden rounded-[22px] border border-white/10 bg-[#07131d]">
+                  <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="h-3 w-3 rounded-full bg-red-400" />
                       <span className="h-3 w-3 rounded-full bg-yellow-400" />
                       <span className="h-3 w-3 rounded-full bg-green-400" />
                     </div>
-                    <div className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-white/50 sm:block">
-                      nixrix business system preview
+                    <div className="rounded-full border border-cyan-300/15 bg-cyan-400/10 px-3 py-1 text-[11px] text-cyan-200">
+                      live system preview
                     </div>
                   </div>
 
-                  <div className="grid gap-4 p-4 lg:grid-cols-[1.35fr_0.85fr]">
-                    {/* left main preview */}
-                    <div className="space-y-4">
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <div className="mb-4 flex items-center justify-between">
+                  <div className="grid gap-3 p-4 md:grid-cols-[1.15fr_0.85fr]">
+                    <div className="space-y-3">
+                      <div className="rounded-2xl border border-cyan-300/10 bg-gradient-to-br from-cyan-400/10 to-white/[0.03] p-4">
+                        <div className="mb-3 flex items-center justify-between">
                           <div>
-                            <div className="text-sm font-medium text-white/90">Business Overview</div>
-                            <div className="text-xs text-white/50">Performance snapshot</div>
+                            <div className="text-sm font-semibold text-white">Business Overview</div>
+                            <div className="text-[11px] text-white/50">Live operational snapshot</div>
                           </div>
-                          <div className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">
-                            Live
+                          <div className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] text-emerald-300">
+                            Active
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 p-4">
-                            <div className="text-xs text-white/50">Leads</div>
-                            <div className="mt-2 text-2xl font-semibold text-white">128</div>
-                            <div className="mt-1 text-xs text-cyan-300">+18% this month</div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="rounded-xl bg-cyan-400/10 p-3">
+                            <div className="text-[11px] text-white/55">Leads</div>
+                            <div className="mt-1 text-xl font-bold text-white">128</div>
+                            <div className="text-[10px] text-cyan-200">+18%</div>
                           </div>
 
-                          <div className="rounded-xl bg-gradient-to-br from-teal-500/20 to-teal-500/5 p-4">
-                            <div className="text-xs text-white/50">Enquiries</div>
-                            <div className="mt-2 text-2xl font-semibold text-white">46</div>
-                            <div className="mt-1 text-xs text-teal-300">Steady growth</div>
+                          <div className="rounded-xl bg-teal-400/10 p-3">
+                            <div className="text-[11px] text-white/55">Enquiries</div>
+                            <div className="mt-1 text-xl font-bold text-white">46</div>
+                            <div className="text-[10px] text-teal-200">steady</div>
                           </div>
 
-                          <div className="rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] p-4">
-                            <div className="text-xs text-white/50">Tasks</div>
-                            <div className="mt-2 text-2xl font-semibold text-white">12</div>
-                            <div className="mt-1 text-xs text-white/60">In workflow</div>
+                          <div className="rounded-xl bg-white/5 p-3">
+                            <div className="text-[11px] text-white/55">Tasks</div>
+                            <div className="mt-1 text-xl font-bold text-white">12</div>
+                            <div className="text-[10px] text-white/60">active</div>
                           </div>
                         </div>
                       </div>
 
                       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <div className="mb-4 flex items-center justify-between">
-                          <div>
-                            <div className="text-sm font-medium text-white/90">Reporting & Insights</div>
-                            <div className="text-xs text-white/50">Visibility across key metrics</div>
-                          </div>
-                        </div>
+                        <div className="mb-3 text-sm font-semibold text-white">Reporting & Insights</div>
 
                         <div className="space-y-3">
                           <div>
-                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                            <div className="mb-1 flex items-center justify-between text-[11px] text-white/60">
                               <span>Lead conversion</span>
                               <span>72%</span>
                             </div>
                             <div className="h-2 rounded-full bg-white/10">
-                              <div className="h-2 w-[72%] rounded-full bg-gradient-to-r from-cyan-400 to-teal-400" />
+                              <motion.div
+                                className="h-2 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400"
+                                initial={{ width: 0 }}
+                                animate={{ width: "72%" }}
+                                transition={{ duration: 1.2, delay: 0.6 }}
+                              />
                             </div>
                           </div>
 
                           <div>
-                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                            <div className="mb-1 flex items-center justify-between text-[11px] text-white/60">
                               <span>Response efficiency</span>
                               <span>84%</span>
                             </div>
                             <div className="h-2 rounded-full bg-white/10">
-                              <div className="h-2 w-[84%] rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
+                              <motion.div
+                                className="h-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400"
+                                initial={{ width: 0 }}
+                                animate={{ width: "84%" }}
+                                transition={{ duration: 1.2, delay: 0.8 }}
+                              />
                             </div>
                           </div>
 
                           <div>
-                            <div className="mb-1 flex items-center justify-between text-xs text-white/60">
+                            <div className="mb-1 flex items-center justify-between text-[11px] text-white/60">
                               <span>Workflow completion</span>
                               <span>63%</span>
                             </div>
                             <div className="h-2 rounded-full bg-white/10">
-                              <div className="h-2 w-[63%] rounded-full bg-gradient-to-r from-cyan-400 to-teal-400" />
+                              <motion.div
+                                className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400"
+                                initial={{ width: 0 }}
+                                animate={{ width: "63%" }}
+                                transition={{ duration: 1.2, delay: 1 }}
+                              />
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* right side stack */}
-                    <div className="space-y-4">
-                      <div className="rounded-2xl border border-cyan-400/15 bg-cyan-400/10 p-4">
-                        <div className="text-sm font-medium text-white">CRM-ready lead capture</div>
-                        <div className="mt-1 text-xs leading-5 text-white/70">
+                    <div className="space-y-3">
+                      <motion.div
+                        whileHover={{ y: -4 }}
+                        className="rounded-2xl border border-cyan-300/10 bg-gradient-to-br from-cyan-400/15 to-cyan-400/5 p-4"
+                      >
+                        <div className="text-sm font-semibold text-white">CRM-ready lead capture</div>
+                        <div className="mt-1 text-[11px] leading-5 text-white/70">
                           Structured enquiry flow designed for handoff and follow-up.
                         </div>
-                      </div>
+                      </motion.div>
 
-                      <div className="rounded-2xl border border-teal-400/15 bg-teal-400/10 p-4">
-                        <div className="text-sm font-medium text-white">FAQ chatbot support</div>
-                        <div className="mt-1 text-xs leading-5 text-white/70">
-                          Answer common questions and guide visitors without friction.
+                      <motion.div
+                        whileHover={{ y: -4 }}
+                        className="rounded-2xl border border-teal-300/10 bg-gradient-to-br from-teal-400/15 to-teal-400/5 p-4"
+                      >
+                        <div className="text-sm font-semibold text-white">FAQ chatbot support</div>
+                        <div className="mt-1 text-[11px] leading-5 text-white/70">
+                          Answer common questions and guide visitors smoothly.
                         </div>
-                      </div>
+                      </motion.div>
 
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                        <div className="mb-3 text-sm font-medium text-white">System status</div>
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between text-xs text-white/70">
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                        <div className="mb-3 text-sm font-semibold text-white">System status</div>
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between text-[11px] text-white/70">
                             <span>Website structure</span>
                             <span className="text-emerald-300">Ready</span>
                           </div>
-                          <div className="flex items-center justify-between text-xs text-white/70">
+                          <div className="flex items-center justify-between text-[11px] text-white/70">
                             <span>Dashboard layer</span>
-                            <span className="text-emerald-300">Connected</span>
+                            <span className="text-cyan-300">Connected</span>
                           </div>
-                          <div className="flex items-center justify-between text-xs text-white/70">
+                          <div className="flex items-center justify-between text-[11px] text-white/70">
                             <span>Automation flow</span>
-                            <span className="text-cyan-300">Active</span>
+                            <span className="text-teal-300">Active</span>
                           </div>
                         </div>
                       </div>
 
                       <Button
                         onClick={() => setAuditOpen(true)}
-                        className="h-12 w-full rounded-xl bg-white text-gray-900 hover:bg-gray-100"
+                        className="h-11 w-full rounded-xl bg-gradient-to-r from-white to-slate-100 text-slate-900 hover:from-slate-50 hover:to-white"
                       >
                         Book Free Audit
                       </Button>
@@ -522,136 +543,225 @@ export function HomePage() {
       </section>
 
       {/* SERVICES */}
-      <section className="bg-white py-20 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-white py-20 md:py-24">
+        <div className="absolute inset-0">
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-cyan-50 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-teal-50 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600">
+            <motion.span
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600"
+            >
               Services
-            </span>
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              viewport={{ once: true }}
+              className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl"
+            >
               Digital solutions built around your business
-            </h2>
-            <p className="mt-6 text-lg text-gray-600">
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mt-6 text-lg text-slate-600"
+            >
               We help growing businesses improve visibility, lead generation, and digital functionality with practical systems that support real business needs.
-            </p>
+            </motion.p>
           </div>
 
           <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {services.map((service, index) => {
-              return (
-                <motion.div
-                  key={service.title}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.45, delay: index * 0.1 }}
-                  whileHover={{ y: -6 }}
-                >
-                  <Card className="h-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-xl">
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="h-full w-full object-cover transition duration-500 hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+            {services.map((service, index) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="group h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition hover:shadow-[0_20px_50px_rgba(13,148,136,0.16)]">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur">
+                      Professional digital delivery
                     </div>
+                  </div>
 
-                    <CardContent className="flex h-full flex-col p-7">
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {service.title}
-                      </h3>
+                  <CardContent className="flex h-full flex-col p-7">
+                    <h3 className="text-xl font-semibold text-slate-900">{service.title}</h3>
 
-                      <p className="mt-3 text-sm leading-6 text-gray-600">
-                        {service.description}
-                      </p>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      {service.description}
+                    </p>
 
-                      <ul className="mt-5 space-y-2">
-                        {service.features.map((feature) => (
-                          <li key={feature} className="flex items-start text-sm text-gray-700">
-                            <Check className="mr-2 mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
+                    <ul className="mt-5 space-y-2">
+                      {service.features.map((feature) => (
+                        <li key={feature} className="flex items-start text-sm text-slate-700">
+                          <Check className="mr-2 mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
 
-                      <div className="mt-auto pt-6">
-                        <Link
-                          to="/services"
-                          className="inline-flex items-center font-semibold text-teal-700"
-                        >
-                          Learn more
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+                    <div className="mt-auto pt-6">
+                      <Link
+                        to="/services"
+                        className="inline-flex items-center font-semibold text-teal-700 transition hover:text-cyan-600"
+                      >
+                        Learn more
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* WHY CHOOSE US */}
-      <section className="bg-gray-50 py-20 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* WHY NIXRIX */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white py-20 md:py-24">
+        <div className="absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-60 w-60 -translate-x-1/2 rounded-full bg-teal-100/60 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600">
+            <motion.span
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600"
+            >
               Why NIXRIX
-            </span>
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              viewport={{ once: true }}
+              className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl"
+            >
               More than a website
-            </h2>
-            <p className="mt-6 text-lg text-gray-600">
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mt-6 text-lg text-slate-600"
+            >
               We build digital experiences that do more than look good — they are designed to support growth, improve clarity, and create better business functionality.
-            </p>
+            </motion.p>
           </div>
 
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {reasons.map((reason, index) => {
-              const Icon = reason.icon;
+            {reasons.map((reason, index) => (
+              <motion.div
+                key={reason.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="group h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)] transition hover:shadow-[0_20px_45px_rgba(13,148,136,0.12)]">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={reason.image}
+                      alt={reason.title}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-medium text-cyan-100 backdrop-blur">
+                      NIXRIX approach
+                    </div>
+                  </div>
 
-              return (
-                <motion.div
-                  key={reason.title}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.45, delay: index * 0.1 }}
-                >
-                  <Card className="h-full rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                    <CardContent className="p-7">
-                      <div className="mb-5 inline-flex rounded-2xl bg-gradient-to-r from-cyan-500/10 to-teal-500/10 p-3 text-teal-700">
-                        <Icon className="h-6 w-6" />
-                      </div>
-
-                      <h3 className="text-xl font-semibold text-gray-900">{reason.title}</h3>
-                      <p className="mt-3 text-sm leading-6 text-gray-600">
-                        {reason.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+                  <CardContent className="p-7">
+                    <h3 className="text-xl font-semibold text-slate-900">{reason.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{reason.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="bg-gray-950 py-20 md:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      {/* TRUST SIGNALS */}
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#062f2c_0%,#0b3f3f_45%,#0b5560_100%)] py-20 md:py-24">
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute left-0 top-0 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl"
+            animate={{ x: [0, 30, 0], y: [0, 30, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-teal-300/10 blur-3xl"
+            animate={{ x: [0, -25, 0], y: [0, -15, 0] }}
+            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, rgba(255,255,255,1) 1px, transparent 1px)",
+              backgroundSize: "38px 38px",
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
+            <motion.span
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200"
+            >
               Trust signals
-            </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              viewport={{ once: true }}
+              className="mt-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl"
+            >
               Built with business growth in mind
-            </h2>
-            <p className="mt-6 text-lg text-gray-300">
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mt-6 text-lg text-teal-50/85"
+            >
               NIXRIX is designed to help businesses move beyond brochure-style websites into more functional, scalable digital systems.
-            </p>
+            </motion.p>
           </div>
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -662,14 +772,13 @@ export function HomePage() {
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.45, delay: index * 0.1 }}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center backdrop-blur"
+                whileHover={{ y: -6 }}
+                className="rounded-2xl border border-white/10 bg-white/10 p-8 text-center shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur"
               >
-                <div className="text-2xl font-bold text-white md:text-3xl">
+                <div className="bg-gradient-to-r from-cyan-200 to-teal-200 bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
                   {stat.value}
                 </div>
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  {stat.label}
-                </p>
+                <p className="mt-3 text-sm leading-6 text-white/75">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -677,44 +786,58 @@ export function HomePage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative overflow-hidden py-20 md:py-24">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D9488] via-[#0c8479] to-[#06B6D4]" />
-        <div
-          className="absolute inset-0 opacity-[0.09]"
-          style={{
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+      <section className="relative overflow-hidden bg-white py-20 md:py-24">
+        <div className="absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-56 w-56 -translate-x-1/2 rounded-full bg-cyan-100 blur-3xl" />
+        </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white sm:text-5xl">
-            Ready to grow your business with a stronger digital system?
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/90">
-            Let’s identify what your website needs now, what can be improved, and what should be built next.
-          </p>
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-r from-[#0D9488] via-[#0f766e] to-[#06B6D4] p-10 text-center shadow-[0_25px_80px_rgba(13,148,136,0.22)] md:p-14"
+          >
+            <div className="mx-auto max-w-3xl">
+              <h2 className="text-3xl font-bold text-white sm:text-5xl">
+                Ready to grow your business with a stronger digital system?
+              </h2>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-white/90">
+                Let’s identify what your website needs now, what can be improved, and what should be built next.
+              </p>
 
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button
-              size="lg"
-              onClick={() => setAuditOpen(true)}
-              className="h-14 rounded-xl bg-white px-8 text-base text-[#0D9488] hover:bg-gray-100"
-            >
-              Book Free Audit
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+              <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button
+                    size="lg"
+                    onClick={() => setAuditOpen(true)}
+                    className="h-14 rounded-xl bg-white px-8 text-base text-[#0D9488] hover:bg-slate-100"
+                  >
+                    Book Free Audit
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </motion.div>
 
-            <Link to="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 rounded-xl border-white/70 bg-transparent px-8 text-base text-white hover:bg-white hover:text-gray-900"
-              >
-                Contact Us
-              </Button>
-            </Link>
-          </div>
+                <Link to="/contact">
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="h-14 rounded-xl border-white/70 bg-transparent px-8 text-base text-white hover:bg-white hover:text-slate-900"
+                    >
+                      Contact Us
+                    </Button>
+                  </motion.div>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
