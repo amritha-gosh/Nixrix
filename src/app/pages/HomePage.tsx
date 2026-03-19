@@ -203,28 +203,32 @@ export function HomePage() {
       title: "Business Websites",
       description:
         "Custom websites designed to present your business clearly, perform well, and convert visitors into enquiries.",
-      icon: Globe,
+      image:
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=800&fit=crop",
       features: ["Responsive design", "SEO-ready structure", "Lead-focused pages"],
     },
     {
       title: "FAQ Chatbots",
       description:
         "Simple chatbot experiences that answer questions, improve response time, and guide visitors efficiently.",
-      icon: Bot,
+      image:
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=800&fit=crop",
       features: ["FAQ responses", "Lead capture support", "Better visitor experience"],
     },
     {
       title: "Dashboards & Insights",
       description:
         "Live KPI visibility and reporting layers that help businesses understand performance and act faster.",
-      icon: BarChart3,
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop",
       features: ["KPI visibility", "Business reporting", "Decision support"],
     },
     {
       title: "Automation & Workflows",
       description:
         "Digital workflows and system-ready foundations that reduce manual work and improve operational efficiency.",
-      icon: Workflow,
+      image:
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=800&fit=crop",
       features: ["Workflow support", "CRM readiness", "Scalable foundations"],
     },
   ];
@@ -460,8 +464,6 @@ export function HomePage() {
 
           <div className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {services.map((service, index) => {
-              const Icon = service.icon;
-
               return (
                 <motion.div
                   key={service.title}
@@ -471,12 +473,17 @@ export function HomePage() {
                   transition={{ duration: 0.45, delay: index * 0.1 }}
                   whileHover={{ y: -6 }}
                 >
-                  <Card className="h-full rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-xl">
-                    <CardContent className="flex h-full flex-col p-7">
-                      <div className="mb-5 inline-flex rounded-2xl bg-gradient-to-r from-cyan-500/10 to-teal-500/10 p-3 text-teal-700">
-                        <Icon className="h-6 w-6" />
-                      </div>
+                  <Card className="h-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-xl">
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                    </div>
 
+                    <CardContent className="flex h-full flex-col p-7">
                       <h3 className="text-xl font-semibold text-gray-900">
                         {service.title}
                       </h3>
