@@ -1,73 +1,70 @@
-/**
- * NIXRIX — CustomCursor.tsx
- * Fancy red dot cursor with trailing ring.
- * Import once in App.tsx / layout — renders globally.
- */
-
 import { useEffect, useRef } from "react";
 
 export function CustomCursor() {
-  const dotRef   = useRef<HTMLDivElement>(null);
-  const ringRef  = useRef<HTMLDivElement>(null);
+  const dotRef  = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const pos     = useRef({ mx: -200, my: -200, rx: -200, ry: -200 });
+  const raf     = useRef<number>(0);
+  const active  = useRef(false);
 
   useEffect(() => {
-    // Only on non-touch devices
-    if ("ontouchstart" in window) return;
+    // Bail on touch devices
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(hover: none)").matches) return;
 
-    let mouseX = -100;
-    let mouseY = -100;
-    let ringX  = -100;
-    let ringY  = -100;
-    let raf: number;
+    const dot  = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
+    // Show once mouse moves
     const onMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      pos.current.mx = e.clientX;
+      pos.current.my = e.clientY;
+      if (!active.current) {
+        active.current = true;
+        dot.style.opacity  = "1";
+        ring.style.opacity = "1";
+      }
     };
 
     const loop = () => {
-      // Dot: instant
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${mouseX - 5}px, ${mouseY - 5}px)`;
-      }
-      // Ring: lerp for trail
-      ringX += (mouseX - ringX) * 0.13;
-      ringY += (mouseY - ringY) * 0.13;
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringX - 18}px, ${ringY - 18}px)`;
-      }
-      raf = requestAnimationFrame(loop);
+      const p = pos.current;
+      // Dot snaps instantly
+      dot.style.transform = `translate3d(${p.mx - 5}px,${p.my - 5}px,0)`;
+      // Ring lerps behind
+      p.rx += (p.mx - p.rx) * 0.12;
+      p.ry += (p.my - p.ry) * 0.12;
+      ring.style.transform = `translate3d(${p.rx - 20}px,${p.ry - 20}px,0)`;
+      raf.current = requestAnimationFrame(loop);
     };
 
-    const onEnterLink = () => {
-      dotRef.current?.classList.add("cursor-hover");
-      ringRef.current?.classList.add("cursor-hover");
+    const onEnter = () => {
+      dot.dataset.hover  = "1";
+      ring.dataset.hover = "1";
     };
-    const onLeaveLink = () => {
-      dotRef.current?.classList.remove("cursor-hover");
-      ringRef.current?.classList.remove("cursor-hover");
+    const onLeave = () => {
+      delete dot.dataset.hover;
+      delete ring.dataset.hover;
     };
 
-    window.addEventListener("mousemove", onMove);
-    raf = requestAnimationFrame(loop);
-
-    // Watch interactive elements
-    const watch = () => {
+    const attach = () => {
       document
-        .querySelectorAll("a, button, [role=button], input, textarea, select, label")
+        .querySelectorAll("a,button,[role=button],input,textarea,select,label,[tabindex]")
         .forEach((el) => {
-          el.addEventListener("mouseenter", onEnterLink);
-          el.addEventListener("mouseleave", onLeaveLink);
+          (el as HTMLElement).addEventListener("mouseenter", onEnter, { passive: true });
+          (el as HTMLElement).addEventListener("mouseleave", onLeave, { passive: true });
         });
     };
-    watch();
+    attach();
 
-    // Re-attach on DOM changes
-    const observer = new MutationObserver(watch);
+    const observer = new MutationObserver(attach);
     observer.observe(document.body, { childList: true, subtree: true });
 
+    window.addEventListener("mousemove", onMove, { passive: true });
+    raf.current = requestAnimationFrame(loop);
+
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf.current);
       window.removeEventListener("mousemove", onMove);
       observer.disconnect();
     };
@@ -76,44 +73,41 @@ export function CustomCursor() {
   return (
     <>
       <style>{`
-        * { cursor: none !important; }
-
-        #nixrix-cursor-dot {
-          position: fixed;
-          top: 0; left: 0;
-          width: 10px; height: 10px;
-          background: #E8230A;
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 99999;
-          transition: width 0.18s ease, height 0.18s ease, background 0.18s ease;
-          box-shadow: 0 0 8px rgba(232,35,10,0.55);
+        @media (hover: hover) {
+          *, *::before, *::after { cursor: none !important; }
         }
-        #nixrix-cursor-dot.cursor-hover {
-          width: 14px; height: 14px;
-          background: #C01A05;
-          box-shadow: 0 0 16px rgba(232,35,10,0.70);
+        #nx-dot {
+          position: fixed; top:0; left:0; z-index:999999;
+          width:10px; height:10px; border-radius:50%;
+          background:#E8230A;
+          pointer-events:none;
+          opacity:0;
+          transition: width .15s ease, height .15s ease, opacity .3s ease,
+                      box-shadow .15s ease;
+          box-shadow: 0 0 10px rgba(232,35,10,.55);
+          will-change: transform;
         }
-
-        #nixrix-cursor-ring {
-          position: fixed;
-          top: 0; left: 0;
-          width: 36px; height: 36px;
-          border: 1.5px solid rgba(232,35,10,0.45);
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 99998;
-          transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
-          opacity: 0.75;
+        #nx-dot[data-hover] {
+          width:16px; height:16px;
+          box-shadow: 0 0 20px rgba(232,35,10,.75);
         }
-        #nixrix-cursor-ring.cursor-hover {
-          width: 48px; height: 48px;
-          border-color: rgba(232,35,10,0.65);
-          opacity: 1;
+        #nx-ring {
+          position:fixed; top:0; left:0; z-index:999998;
+          width:40px; height:40px; border-radius:50%;
+          border:1.5px solid rgba(232,35,10,.40);
+          pointer-events:none;
+          opacity:0;
+          transition: width .2s ease, height .2s ease, opacity .3s ease,
+                      border-color .2s ease;
+          will-change: transform;
+        }
+        #nx-ring[data-hover] {
+          width:56px; height:56px;
+          border-color:rgba(232,35,10,.65);
         }
       `}</style>
-      <div id="nixrix-cursor-dot"  ref={dotRef}  aria-hidden="true" />
-      <div id="nixrix-cursor-ring" ref={ringRef} aria-hidden="true" />
+      <div id="nx-dot"  ref={dotRef}  aria-hidden="true" />
+      <div id="nx-ring" ref={ringRef} aria-hidden="true" />
     </>
   );
 }
