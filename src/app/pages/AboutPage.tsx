@@ -1,9 +1,3 @@
-/**
- * NIXRIX — AboutPage.tsx
- * Fonts: Playfair Display (headings) + Plus Jakarta Sans (body)
- * Palette: cream backgrounds, red accents, ink dark, no teal
- */
-
 import { Link } from "react-router-dom";
 import {
   ArrowRight, CheckCircle2, Zap, Shield, Clock,
@@ -267,53 +261,6 @@ export function AboutPage() {
                   </div>
                   <h3 className="mb-2 text-lg font-normal text-[#1A1208]" style={{ fontFamily:F.h }}>{v.title}</h3>
                   <p className="text-sm font-light leading-7 text-[#1A1208]/65" style={{ fontFamily:F.b }}>{v.body}</p>
-                </motion.div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TEAM ─────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-24" style={{ background:"#EDE4D4" }}>
-        <div className="pointer-events-none absolute inset-0 opacity-[0.025]"
-          style={{ backgroundImage:"radial-gradient(circle, #1A1208 1px, transparent 1px)", backgroundSize:"36px 36px" }} />
-
-        <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          <ScrollReveal className="mb-16 text-center">
-            <div className="mb-5 flex items-center justify-center gap-3">
-              <div className="h-px w-7 bg-[#E8230A]" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E8230A]" style={{ fontFamily:F.b }}>The Team</span>
-              <div className="h-px w-7 bg-[#E8230A]" />
-            </div>
-            <h2 className="text-4xl font-normal text-[#1A1208] md:text-5xl" style={{ fontFamily:F.h }}>
-              Small Team. Full Attention.
-            </h2>
-            <p className="mx-auto mt-5 max-w-xl text-lg font-light leading-8 text-[#1A1208]/65" style={{ fontFamily:F.b }}>
-              You work directly with the people building your system. No account managers, no handoffs.
-            </p>
-          </ScrollReveal>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {team.map((member, i) => (
-              <ScrollReveal key={i} delay={i*0.1}>
-                <motion.div whileHover={{ y:-7, borderColor:"#E8230A", boxShadow:"0 20px 52px rgba(232,35,10,0.13)" }}
-                  transition={{ type:"spring", stiffness:260 }}
-                  className="overflow-hidden rounded-2xl border border-[#1A1208]/10 bg-white">
-                  <div className="relative h-56 overflow-hidden">
-                    <img src={member.img} alt={member.name} className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1208]/55 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <span className="inline-block rounded-full bg-[#E8230A]/90 px-3 py-1 text-[10px] font-semibold text-white" style={{ fontFamily:F.b }}>
-                        {member.days}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="mb-0.5 text-base font-semibold text-[#1A1208]" style={{ fontFamily:F.b }}>{member.name}</h3>
-                    <p className="mb-3 text-xs font-medium text-[#E8230A]" style={{ fontFamily:F.b }}>{member.role}</p>
-                    <p className="text-xs font-light leading-6 text-[#1A1208]/65" style={{ fontFamily:F.b }}>{member.bio}</p>
-                  </div>
                 </motion.div>
               </ScrollReveal>
             ))}
