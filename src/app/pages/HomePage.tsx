@@ -1,9 +1,3 @@
-/**
- * NIXRIX — HomePage.tsx
- * Full rewrite: DM Serif Display + Outfit fonts, animated SVG workflow hero,
- * real images, tool logos, reviews with profile photos, no AI-tell hyphens.
- */
-
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import {
