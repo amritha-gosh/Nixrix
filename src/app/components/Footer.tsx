@@ -56,7 +56,7 @@ function FacebookIcon() {
 const socialLinks = [
   { label: "LinkedIn",  href: "https://linkedin.com/company/nixrix",   Icon: LinkedInIcon  },
   { label: "X",         href: "https://x.com/nixrix",                  Icon: XIcon         },
-  { label: "Instagram", href: "https://instagram.com/nixrix",           Icon: InstagramIcon },
+  { label: "Instagram", href: "https://instagram.com/nixrix_",           Icon: InstagramIcon },
   { label: "WhatsApp",  href: "https://wa.me/447492712144",             Icon: WhatsAppIcon  },
   { label: "Facebook",  href: "https://facebook.com/nixrix",            Icon: FacebookIcon  },
 ];
